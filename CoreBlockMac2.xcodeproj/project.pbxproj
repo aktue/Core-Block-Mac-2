@@ -10,6 +10,12 @@
 		D72BA123221015F3001CB4A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA122221015F3001CB4A0 /* AppDelegate.swift */; };
 		D72BA125221015F4001CB4A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D72BA124221015F4001CB4A0 /* Assets.xcassets */; };
 		D72BA128221015F4001CB4A0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D72BA126221015F4001CB4A0 /* MainMenu.xib */; };
+		D72BA13222101EFA001CB4A0 /* CoreBlockPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA13122101EFA001CB4A0 /* CoreBlockPiece.swift */; };
+		D72BA1342210254D001CB4A0 /* CoreBlockTetris.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA1332210254D001CB4A0 /* CoreBlockTetris.swift */; };
+		D72BA13622104E3F001CB4A0 /* CoreBlockMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA13522104E3F001CB4A0 /* CoreBlockMenu.swift */; };
+		D72BA138221055FC001CB4A0 /* CoreBlockHold.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA137221055FC001CB4A0 /* CoreBlockHold.swift */; };
+		D72BA13A2210FD2F001CB4A0 /* CoreBlockStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA1392210FD2F001CB4A0 /* CoreBlockStack.swift */; };
+		D72BA13C221109D4001CB4A0 /* CoreBlockPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA13B221109D4001CB4A0 /* CoreBlockPreview.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +25,12 @@
 		D72BA127221015F4001CB4A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D72BA129221015F4001CB4A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D72BA12A221015F4001CB4A0 /* CoreBlockMac2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CoreBlockMac2.entitlements; sourceTree = "<group>"; };
+		D72BA13122101EFA001CB4A0 /* CoreBlockPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockPiece.swift; sourceTree = "<group>"; };
+		D72BA1332210254D001CB4A0 /* CoreBlockTetris.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockTetris.swift; sourceTree = "<group>"; };
+		D72BA13522104E3F001CB4A0 /* CoreBlockMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockMenu.swift; sourceTree = "<group>"; };
+		D72BA137221055FC001CB4A0 /* CoreBlockHold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockHold.swift; sourceTree = "<group>"; };
+		D72BA1392210FD2F001CB4A0 /* CoreBlockStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockStack.swift; sourceTree = "<group>"; };
+		D72BA13B221109D4001CB4A0 /* CoreBlockPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockPreview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +47,7 @@
 		D72BA116221015F3001CB4A0 = {
 			isa = PBXGroup;
 			children = (
+				D72BA1302210167D001CB4A0 /* CoreBlock */,
 				D72BA121221015F3001CB4A0 /* CoreBlockMac2 */,
 				D72BA120221015F3001CB4A0 /* Products */,
 			);
@@ -58,6 +71,19 @@
 				D72BA12A221015F4001CB4A0 /* CoreBlockMac2.entitlements */,
 			);
 			path = CoreBlockMac2;
+			sourceTree = "<group>";
+		};
+		D72BA1302210167D001CB4A0 /* CoreBlock */ = {
+			isa = PBXGroup;
+			children = (
+				D72BA1332210254D001CB4A0 /* CoreBlockTetris.swift */,
+				D72BA13122101EFA001CB4A0 /* CoreBlockPiece.swift */,
+				D72BA13522104E3F001CB4A0 /* CoreBlockMenu.swift */,
+				D72BA137221055FC001CB4A0 /* CoreBlockHold.swift */,
+				D72BA1392210FD2F001CB4A0 /* CoreBlockStack.swift */,
+				D72BA13B221109D4001CB4A0 /* CoreBlockPreview.swift */,
+			);
+			path = CoreBlock;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -130,7 +156,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D72BA13C221109D4001CB4A0 /* CoreBlockPreview.swift in Sources */,
 				D72BA123221015F3001CB4A0 /* AppDelegate.swift in Sources */,
+				D72BA13A2210FD2F001CB4A0 /* CoreBlockStack.swift in Sources */,
+				D72BA1342210254D001CB4A0 /* CoreBlockTetris.swift in Sources */,
+				D72BA138221055FC001CB4A0 /* CoreBlockHold.swift in Sources */,
+				D72BA13222101EFA001CB4A0 /* CoreBlockPiece.swift in Sources */,
+				D72BA13622104E3F001CB4A0 /* CoreBlockMenu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
