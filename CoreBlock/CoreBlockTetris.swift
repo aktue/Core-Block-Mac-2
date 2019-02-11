@@ -156,7 +156,7 @@ var settings = (
     Gravity: 0,
     SoftDrop: 31,
     LockDelay: 30,
-    Ghost: 0,
+    Ghost: 0
 )
 
 /// total frames

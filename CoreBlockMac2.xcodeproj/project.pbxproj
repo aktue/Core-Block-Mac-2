@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		420FC1CF0D8B79B2CCE444D5 /* Pods_CoreBlockMac2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B945275F5DCD3418BE02794 /* Pods_CoreBlockMac2.framework */; };
 		D72BA123221015F3001CB4A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA122221015F3001CB4A0 /* AppDelegate.swift */; };
 		D72BA125221015F4001CB4A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D72BA124221015F4001CB4A0 /* Assets.xcassets */; };
 		D72BA128221015F4001CB4A0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D72BA126221015F4001CB4A0 /* MainMenu.xib */; };
@@ -19,6 +20,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2B945275F5DCD3418BE02794 /* Pods_CoreBlockMac2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CoreBlockMac2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		385C7C6DED1D094C078C3DAD /* Pods-CoreBlockMac2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreBlockMac2.release.xcconfig"; path = "Pods/Target Support Files/Pods-CoreBlockMac2/Pods-CoreBlockMac2.release.xcconfig"; sourceTree = "<group>"; };
+		73929BE4DDBE5E45E60D32D7 /* Pods-CoreBlockMac2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreBlockMac2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CoreBlockMac2/Pods-CoreBlockMac2.debug.xcconfig"; sourceTree = "<group>"; };
 		D72BA11F221015F3001CB4A0 /* CoreBlockMac2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreBlockMac2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D72BA122221015F3001CB4A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D72BA124221015F4001CB4A0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -38,18 +42,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				420FC1CF0D8B79B2CCE444D5 /* Pods_CoreBlockMac2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		89EC37C24BA5C72FEC3CDF1F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B945275F5DCD3418BE02794 /* Pods_CoreBlockMac2.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BE481223748CC217CCC7D7EC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				73929BE4DDBE5E45E60D32D7 /* Pods-CoreBlockMac2.debug.xcconfig */,
+				385C7C6DED1D094C078C3DAD /* Pods-CoreBlockMac2.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		D72BA116221015F3001CB4A0 = {
 			isa = PBXGroup;
 			children = (
 				D72BA1302210167D001CB4A0 /* CoreBlock */,
 				D72BA121221015F3001CB4A0 /* CoreBlockMac2 */,
 				D72BA120221015F3001CB4A0 /* Products */,
+				BE481223748CC217CCC7D7EC /* Pods */,
+				89EC37C24BA5C72FEC3CDF1F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -93,9 +117,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D72BA12D221015F4001CB4A0 /* Build configuration list for PBXNativeTarget "CoreBlockMac2" */;
 			buildPhases = (
+				52D7E319ECD70858FA9541EF /* [CP] Check Pods Manifest.lock */,
 				D72BA11B221015F3001CB4A0 /* Sources */,
 				D72BA11C221015F3001CB4A0 /* Frameworks */,
 				D72BA11D221015F3001CB4A0 /* Resources */,
+				DAEF71195D7D8CC85DFF77AE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -150,6 +176,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		52D7E319ECD70858FA9541EF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CoreBlockMac2-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DAEF71195D7D8CC85DFF77AE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-CoreBlockMac2/Pods-CoreBlockMac2-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CoreBlockMac2/Pods-CoreBlockMac2-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D72BA11B221015F3001CB4A0 /* Sources */ = {
@@ -295,6 +360,7 @@
 		};
 		D72BA12E221015F4001CB4A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 73929BE4DDBE5E45E60D32D7 /* Pods-CoreBlockMac2.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = CoreBlockMac2/CoreBlockMac2.entitlements;
@@ -305,6 +371,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = yhzhou.tom.CoreBlockMac2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -313,6 +380,7 @@
 		};
 		D72BA12F221015F4001CB4A0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 385C7C6DED1D094C078C3DAD /* Pods-CoreBlockMac2.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = CoreBlockMac2/CoreBlockMac2.entitlements;
@@ -323,6 +391,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = yhzhou.tom.CoreBlockMac2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
