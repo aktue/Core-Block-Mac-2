@@ -146,17 +146,15 @@ var finesse: [[[Int]]] = [
  * Gameplay specific vars.
  */
 /// default gravity
-var gravityUnit: Double = 0.00390625
-var gravity: Double = 0
-var gravityArr: [Double] = [0, 1.0/64.0, 2.0/64.0, 4.0/64.0, 8.0/64.0, 16.0/64.0, 32.0/64.0, 1, 20]
+var gravity: Double = 1.0 / 64
 
 var settings = (
     DAS: 6,
     ARR: 0,
-    Gravity: 0,
-    SoftDrop: 31,
+    Gravity: 1.0 / 64,
+    SoftDrop: 200.0,
     LockDelay: 30,
-    Ghost: 0
+    Ghost: 1
 )
 
 /// total frames
@@ -189,12 +187,12 @@ var lineLimit = 0
 var replayKeys: [Int: Int] = [:]
 var watchingReplay = false
 
-/// replay: -1
 /*
- -1 : replay
-  3 : dig race
+ -1: Replay
+ 0 : Sprint
+ 3 : Dig race
  */
-var gametype = 0
+var gameType = 0
 
 //TODO Make dirty flags for each canvas, draw them all at once during frame call.
 // var dirtyHold, dirtyActive, dirtyStack, dirtyPreview
@@ -215,16 +213,26 @@ var lastKeys = 0
 
 /// these codes are inner values, as constant, do not change it, different with outer
 var binds = (
-    pause: 32,
-    moveLeft: 1,
-    moveRight: 2,
-    moveDown: 3,
-    hardDrop: 4,
-    holdPiece: 11,
-    rotRight: 22,
-    rotLeft: 21,
-    rot180: 23,
-    retry: 31
+//    pause: 32,
+//    moveLeft: 1,
+//    moveRight: 2,
+//    moveDown: 3,
+//    hardDrop: 4,
+//    holdPiece: 11,
+//    rotRight: 22,
+//    rotLeft: 21,
+//    rot180: 23,
+//    retry: 31
+    pause: 12,
+    moveLeft: 38,
+    moveRight: 37,
+    moveDown: 40,
+    hardDrop: 34,
+    holdPiece: 49,
+    rotRight: 3,
+    rotLeft: 2,
+    rot180: 1,
+    retry: 15
 )
 var flags = (
     hardDrop: 1,
@@ -255,24 +263,50 @@ extension Int {
 }
 
 
+extension Double {
+    
+    /// as an unknow or default
+    static var max: Double {
+        return 999999
+    }
+}
+
+
 // MARK: - game controller
+
+protocol CoreBlockControllerProtocol {
+    
+    /// common
+    func draw(_ drawInfo: CoreBlockController.DrawInfo)
+    func clear(_ type: CoreBlockController.DrawType)
+    /// preview
+    func draw(_ drawInfoArray: [CoreBlockController.DrawInfo])
+    
+    /// message
+    func message(_ message: String, _ type: CoreBlockController.MessageType)
+}
 
 class CoreBlockController {
     
     static var shared: CoreBlockController = CoreBlockController()
     
+    var delegate: CoreBlockControllerProtocol?
+    
+    var timer: DispatchSourceTimer!
+    var pageStepTime: DispatchTimeInterval = .microseconds(1000000 / 60)
+    
     /**
      * Resets all the settings and starts the game.
      */
-    func new(_ gt: Int) {
+    func new(gameType gt: Int) {
         if (gt == -1) {
             watchingReplay = true
         } else {
             watchingReplay = false
             replayKeys = [:]
             // TODO Make new seed and rng method.
-            replayKeys[-1] = Int(arc4random() * 2147483645 + 1)
-            gametype = gt
+            replayKeys[-1] = Int(arc4random()) * 2147483645 + 1
+            gameType = gt
         }
         
         lineLimit = 40
@@ -294,9 +328,6 @@ class CoreBlockController {
         lastPos = Int.undefined
         CoreBlockStack.shared.new(10, 22)
         CoreBlockHold.shared.piece = Int.undefined
-        if (settings.Gravity == 0) {
-            gravity = gravityUnit * 4
-        }
         startTime = Date.now()
         
         CoreBlockPreview.shared.new()
@@ -305,21 +336,22 @@ class CoreBlockController {
         lines = 0
         piecesSet = 0
         
-        CoreBlockMessage.statsPiece(piecesSet)
-        CoreBlockMessage.statsLines(lineLimit - lines)
+        CoreBlockController.message(statsFinesse, .finesse)
+        CoreBlockController.message(piecesSet, .statsPiece)
+        CoreBlockController.message(lineLimit - lines, .statsLines)
         statistics()
         CoreBlockController.clear(CoreBlockController.DrawType.stack)
         CoreBlockController.clear(CoreBlockController.DrawType.active)
         CoreBlockController.clear(CoreBlockController.DrawType.hold)
         
-        if (gametype == 3) {
+        if (gameType == 3) {
             // Dig Race
             // make ten random numbers, make sure next isn't the same as last?
             //TODO make into function or own file.
             
             digLines = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
             
-            CoreBlockMessage.statsLines(10)
+            CoreBlockController.message(10, .statsLines)
             var randomNums: [Int] = []
             for i in (0 ..< 10) {
                 let random = Int(CoreBlockRng.shared.next() * 10)
@@ -350,7 +382,7 @@ class CoreBlockController {
         if (gameState == 0) {
             paused = true
             startPauseTime = Date.now()
-            CoreBlockMessage.game("Paused")
+            CoreBlockController.message("Paused", .game)
             menu(4)
         }
     }
@@ -358,7 +390,7 @@ class CoreBlockController {
     func unpause() {
         paused = false
         pauseTime += Date.now() - startPauseTime
-        CoreBlockMessage.game("")
+        CoreBlockController.message("", .game)
         menu()
     }
     
@@ -366,11 +398,15 @@ class CoreBlockController {
      * Draws the stats next to the tetrion.
      */
     func statistics() {
+        
         let time = Date.now() - startTime - pauseTime
         let seconds = time / 1000
         let microseconds = (time / 10) % 100
-        CoreBlockMessage.statsTime((seconds < 10 ? "0" : "") + String(seconds) +
-            (microseconds < 10 ? ":0" : ":") + String(microseconds))
+        CoreBlockController.message((seconds < 10 ? "0" : "") + String(seconds) +
+            (microseconds < 10 ? ":0" : ":") + String(microseconds), .statsTime)
+        
+        let pps: Double = piecesSet > 0 ? Double(piecesSet) / Double(time) * 1000 : 0
+        CoreBlockController.message(String(format: "%.2f", pps), .pps)
     }
     
     func pressKey(down: Bool, keyCode: Int) {
@@ -390,7 +426,7 @@ class CoreBlockController {
                 }
             }
             if (keyCode == binds.retry) {
-                CoreBlockController.shared.new(gametype)
+                CoreBlockController.shared.new(gameType: gameType)
             }
             if (!watchingReplay) {
                 if (keyCode == binds.moveLeft) {
@@ -444,25 +480,40 @@ class CoreBlockController {
 extension CoreBlockController {
     
     enum DrawType {
-        case hold, stack, active, preview
+        case hold, stack, active, ghost, preview
+    }
+    
+    class DrawInfo {
+        var tetro: [[Int]]
+        var cx: Int
+        var cy: Int
+        var type: DrawType
+        var color: Int
+        
+        init(tetro: [[Int]], cx: Int, cy: Int, type: DrawType, color: Int = Int.undefined) {
+            self.tetro = tetro
+            self.cx = cx
+            self.cy = cy
+            self.type = type
+            self.color = color
+        }
     }
     
     /**
      * Draws a 2d array of minos.
      */
-    static func draw(_ tetro: [[Int]], _ cx: Int, _ cy: Int, _ type: DrawType, _ color: Int = Int.undefined) {
-        
-        for x in (0 ..< tetro.count) {
-            for y in (0 ..< tetro[x].count) {
-                if (tetro[x][y] != 0) {
-                    //                drawCell(x + cx, y + cy, color != Int.undefined ? color : tetro[x][y], type)
-                }
-            }
-        }
+    /// common
+    static func draw(_ drawInfo: DrawInfo) {
+        self.shared.delegate?.draw(drawInfo)
     }
     
     static func clear(_ type: DrawType) {
-        
+        self.shared.delegate?.clear(type)
+    }
+    
+    /// preview
+    static func draw(_ drawInfoArray: [DrawInfo]) {
+        self.shared.delegate?.draw(drawInfoArray)
     }
 }
 
@@ -474,14 +525,13 @@ extension CoreBlockController {
     /// start timer
     func startGameLoop() {
         
-        let timer: DispatchSourceTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-        let pageStepTime: DispatchTimeInterval = .microseconds(1000000 / 60)
-        timer.schedule(deadline: .now() + pageStepTime, repeating: pageStepTime)
-        timer.setEventHandler {
-            self.gameLoop();
+        self.timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
+        self.timer.schedule(deadline: .now() + self.pageStepTime, repeating: self.pageStepTime)
+        self.timer.setEventHandler {
+            self.gameLoop()
         }
         // 启动定时器
-        timer.resume()
+        self.timer.resume()
     }
     
     //TODO Cleanup gameloop and update.
@@ -507,8 +557,7 @@ extension CoreBlockController {
             CoreBlockPiece.shared.rotate(1)
             CoreBlockPiece.shared.finesse += 1
         } else if ((flags.rot180 & keysDown) > 0 && !((lastKeys & flags.rot180) > 0)) {
-            CoreBlockPiece.shared.rotate(1)
-            CoreBlockPiece.shared.rotate(1)
+            CoreBlockPiece.shared.rotate(2)
             CoreBlockPiece.shared.finesse += 1
         }
         
@@ -526,16 +575,16 @@ extension CoreBlockController {
         
         // Win
         // TODO
-        if (gametype != 3) {
+        if (gameType != 3) {
             if (lines >= lineLimit) {
                 gameState = 1
-                CoreBlockMessage.game("GREAT!")
+                CoreBlockController.message("GREAT!", .game)
                 menu(3)
             }
         } else {
             if (digLines.count == 0) {
                 gameState = 1
-                CoreBlockMessage.game("GREAT!")
+                CoreBlockController.message("GREAT!", .game)
                 menu(3)
             }
         }
@@ -550,58 +599,58 @@ extension CoreBlockController {
     func gameLoop() {
         
         //TODO check to see how pause works in replays.
-        frame += 1;
+        frame += 1
         
         if (gameState == 0) {
             // Playing
             
             if (!paused) {
-                update();
+                update()
             }
             
             // TODO improve this with 'dirty' flags.
             if (
                 CoreBlockPiece.shared.x != lastX ||
-                    Int(CoreBlockPiece.shared.y) != lastY ||
+                    CoreBlockPiece.shared.floorY != lastY ||
                     CoreBlockPiece.shared.pos != lastPos ||
                     CoreBlockPiece.shared.dirty
                 ) {
                 CoreBlockController.clear(CoreBlockController.DrawType.active)
-                CoreBlockPiece.shared.drawGhost();
-                CoreBlockPiece.shared.draw();
+                CoreBlockPiece.shared.drawGhost()
+                CoreBlockPiece.shared.draw()
             }
-            lastX = CoreBlockPiece.shared.x;
-            lastY = Int(CoreBlockPiece.shared.y);
-            lastPos = CoreBlockPiece.shared.pos;
-            CoreBlockPiece.shared.dirty = false;
+            lastX = CoreBlockPiece.shared.x
+            lastY = CoreBlockPiece.shared.floorY
+            lastPos = CoreBlockPiece.shared.pos
+            CoreBlockPiece.shared.dirty = false
         } else if (gameState == 2) {
             // Count Down
             if (frame < 50) {
-                CoreBlockMessage.game("READY")
+                CoreBlockController.message("READY", .game)
             } else if (frame < 100) {
-                CoreBlockMessage.game("GO!")
+                CoreBlockController.message("GO!", .game)
             } else {
-                CoreBlockMessage.game("")
-                gameState = 0;
-                startTime = Date.now();
-                CoreBlockPiece.shared.new(CoreBlockPreview.shared.next());
+                CoreBlockController.message("", .game)
+                gameState = 0
+                startTime = Date.now()
+                CoreBlockPiece.shared.new(CoreBlockPreview.shared.next())
             }
             // DAS Preload
             if (lastKeys != keysDown && !watchingReplay) {
-                replayKeys[frame] = keysDown;
+                replayKeys[frame] = keysDown
             } else if let value = replayKeys[frame] {
                 keysDown = value
             }
             if (keysDown & flags.moveLeft) > 0 {
-                lastKeys = keysDown;
-                CoreBlockPiece.shared.shiftDelay = settings.DAS;
-                CoreBlockPiece.shared.shiftReleased = false;
-                CoreBlockPiece.shared.shiftDir = -1;
+                lastKeys = keysDown
+                CoreBlockPiece.shared.shiftDelay = settings.DAS
+                CoreBlockPiece.shared.shiftReleased = false
+                CoreBlockPiece.shared.shiftDir = -1
             } else if (keysDown & flags.moveRight) > 0 {
-                lastKeys = keysDown;
-                CoreBlockPiece.shared.shiftDelay = settings.DAS;
-                CoreBlockPiece.shared.shiftReleased = false;
-                CoreBlockPiece.shared.shiftDir = 1;
+                lastKeys = keysDown
+                CoreBlockPiece.shared.shiftDelay = settings.DAS
+                CoreBlockPiece.shared.shiftReleased = false
+                CoreBlockPiece.shared.shiftDir = 1
             }
         }
     }
@@ -610,30 +659,23 @@ extension CoreBlockController {
 
 // MARK: - message
 
-class CoreBlockMessage {
+extension CoreBlockController {
     
-    static var lastGameMessage: String = ""
-    
-    static func game(_ message: String) {
-        
-        if self.lastGameMessage != message {
-            self.lastGameMessage = message
-            print(message)
-        }
+    enum MessageType {
+        case game, statsPiece, pps, statsLines, statsTime, finesse
     }
     
-    static func statsPiece(_ message: Int) {
-        print(message)
+    static func message(_ message: String, _ type: MessageType) {
+        self.shared.delegate?.message(message, type)
     }
     
-    static func statsLines(_ message: Int) {
-        print(message)
+    static func message(_ message: Int, _ type: MessageType) {
+        self.shared.delegate?.message(String(message), type)
     }
     
-    static func statsTime(_ message: String) {
-        print(message)
+    static func message(_ message: Double, _ type: MessageType) {
+        self.shared.delegate?.message(String(message), type)
     }
-    
 }
 
 
@@ -661,7 +703,7 @@ extension CoreBlockRng {
         return Double(self.gen()) / 2147483647.0
     }
     func gen() -> Int {
-        self.seed = self.seed * 16807 % 2147483647
+        self.seed = (self.seed % 2147483647) * 16807 % 2147483647
         return self.seed
     }
 }

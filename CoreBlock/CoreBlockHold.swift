@@ -20,10 +20,11 @@ extension CoreBlockHold {
     func draw() {
         
         CoreBlockController.draw(
-            pieces[self.piece].tetro,
-            pieces[self.piece].x - 2,
-            2 + pieces[self.piece].y,
-            CoreBlockController.DrawType.hold
-        )
+            CoreBlockController.DrawInfo(
+                tetro: pieces[self.piece].tetro,
+                cx: pieces[self.piece].x - 2,
+                cy: 2 + pieces[self.piece].y,
+                type: CoreBlockController.DrawType.hold
+        ))
     }
 }

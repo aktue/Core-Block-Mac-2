@@ -53,13 +53,17 @@ extension CoreBlockPreview {
      * Draws the piece preview.
      */
     func draw() {
+        
+        var drawInfoArray: [CoreBlockController.DrawInfo] = []
         for i in (0 ..< 6) {
-            CoreBlockController.draw(
-                pieces[self.grabBag[i]].tetro,
-                pieces[self.grabBag[i]].x - 2,
-                pieces[self.grabBag[i]].y + 2 + i * 3,
-                CoreBlockController.DrawType.preview
-            )
+            drawInfoArray.append(
+                CoreBlockController.DrawInfo(
+                    tetro: pieces[self.grabBag[i]].tetro,
+                    cx: pieces[self.grabBag[i]].x - 2,
+                    cy: pieces[self.grabBag[i]].y + 2 + i * 3,
+                    type: CoreBlockController.DrawType.preview
+            ))
         }
+        CoreBlockController.draw(drawInfoArray)
     }
 }

@@ -15,6 +15,8 @@ class CoreBlockPiece {
     var x: Int = 0
     /// y is double, because gravity is decimal, it will be added each frame and take floor value
     var y: Double = 0
+    /// real y in grid
+    var floorY: Int { return Int(floor(self.y)) }
     var pos: Int = 0
     var tetro: [[Int]] = []
     var index: Int = Int.undefined
@@ -60,7 +62,7 @@ class CoreBlockPiece {
         // Check for blockout.
         if (!self.moveValid(0, 0, self.tetro)) {
             gameState = 9
-            CoreBlockMessage.game("BLOCK OUT!")
+            CoreBlockController.message("BLOCK OUT!", .game)
             menu(3)
         }
     }
@@ -71,21 +73,37 @@ extension CoreBlockPiece {
     func rotate(_ direction: Int) {
         
         // Rotates tetromino.
-        var rotated: [[Int]] = []
+//        var rotated: [[Int]] = []
+        var rotated: [[Int]] = Array(repeating: Array(repeating: 0, count: self.tetro.count), count: self.tetro.count)
         if (direction == -1) {
             for i in (0 ..< self.tetro.count).reversed() {
-                rotated[i] = []
+//                rotated[i] = []
                 for row in (0 ..< self.tetro.count) {
                     rotated[i][self.tetro.count - 1 - row] = self.tetro[row][i]
                 }
             }
-        } else {
+        } else if (direction == 1) {
             for i in (0 ..< self.tetro.count) {
-                rotated[i] = []
+                //                rotated[i] = []
                 for row in (0 ..< self.tetro.count).reversed() {
                     rotated[i][row] = self.tetro[row][self.tetro.count - 1 - i]
                 }
             }
+        } else {
+            for i in (0 ..< self.tetro.count) {
+                //                rotated[i] = []
+                for row in (0 ..< self.tetro.count).reversed() {
+                    rotated[i][row] = self.tetro[row][self.tetro.count - 1 - i]
+                }
+            }
+            var rotated180: [[Int]] = Array(repeating: Array(repeating: 0, count: rotated.count), count: rotated.count)
+            for i in (0 ..< rotated.count) {
+                //                rotated180[i] = []
+                for row in (0 ..< rotated.count).reversed() {
+                    rotated180[i][row] = rotated[row][rotated.count - 1 - i]
+                }
+            }
+            rotated = rotated180
         }
         
         // Goes thorugh kick data until it finds a valid move.
@@ -211,7 +229,7 @@ extension CoreBlockPiece {
     
     func shiftDown() {
         if (self.moveValid(0, 1, self.tetro)) {
-            var grav = gravityArr[settings.SoftDrop + 1]
+            let grav = Double(settings.SoftDrop)
             if (grav > 1) {
                 self.y += self.getDrop(grav)
             } else {
@@ -221,7 +239,7 @@ extension CoreBlockPiece {
     }
     
     func hardDrop() {
-        self.y += self.getDrop(20)
+        self.y += self.getDrop(Double.max)
         self.lockDelay = settings.LockDelay
     }
     
@@ -258,12 +276,12 @@ extension CoreBlockPiece {
      */
     func moveValid(_ cx: Int, _ cy: Int, _ tetro: [[Int]]) -> Bool {
         let cx = cx + self.x
-        let cy = cy + Int(self.y)
+        let cy = cy + self.floorY
         
         for x in (0 ..< tetro.count) {
             for y in (0 ..< tetro[x].count) {
                 if (
-                    tetro[x][y] != 0 &&
+                    tetro[x][y] > 0 &&
                         (cx + x < 0 ||
                             cx + x >= 10 ||
                             cy + y >= 22 ||
@@ -281,7 +299,7 @@ extension CoreBlockPiece {
         if (self.moveValid(0, 1, self.tetro)) {
             landed = false
             if (settings.Gravity > 0) {
-                var grav = gravityArr[settings.Gravity - 1]
+                let grav = Double(settings.Gravity)
                 if (grav > 1) {
                     self.y += self.getDrop(grav)
                 } else {
@@ -292,7 +310,7 @@ extension CoreBlockPiece {
             }
         } else {
             landed = true
-            self.y = floor(self.y)
+            self.y = Double(self.floorY)
             if (self.lockDelay >= settings.LockDelay) {
                 CoreBlockStack.shared.addPiece(self.tetro)
                 self.new(CoreBlockPreview.shared.next())
@@ -309,14 +327,36 @@ extension CoreBlockPiece {
     }
     
     func draw() {
-        CoreBlockController.draw(self.tetro, self.x, Int(self.y), CoreBlockController.DrawType.active)
+        
+        CoreBlockController.draw(
+            CoreBlockController.DrawInfo(
+                tetro: self.tetro,
+                cx: self.x,
+                cy: self.floorY,
+                type: CoreBlockController.DrawType.active
+        ))
     }
     
     func drawGhost() {
         if (!(settings.Ghost > 0) && !landed) {
-            CoreBlockController.draw(self.tetro, self.x, Int(self.y + self.getDrop(22)), CoreBlockController.DrawType.active, 0)
+            CoreBlockController.draw(
+                CoreBlockController.DrawInfo(
+                    tetro: self.tetro,
+                    cx: self.x,
+                    cy: self.floorY + Int(self.getDrop(Double.max)),
+                    type: CoreBlockController.DrawType.ghost,
+                    color: 0
+            ))
         } else if (settings.Ghost == 1 && !landed) {
-            CoreBlockController.draw(self.tetro, self.x, Int(self.y + self.getDrop(22)), CoreBlockController.DrawType.active)
+            CoreBlockController.draw(
+                CoreBlockController.DrawInfo(
+                    tetro: self.tetro,
+                    cx: self.x,
+                    cy: self.floorY + Int(self.getDrop(Double.max)),
+                    type: CoreBlockController.DrawType.ghost
+            ))
+        } else {
+            CoreBlockController.clear(CoreBlockController.DrawType.ghost)
         }
     }
 
