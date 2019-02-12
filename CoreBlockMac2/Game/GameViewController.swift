@@ -17,15 +17,15 @@ class GameViewController: NSViewController {
     /// 矩阵背景
     var stackGridView: StackGridView!
     /// 矩阵（显示已经存在的方块，不包括当前活动的）
-    var stackView: StackView!
+    var stackView: BaseMinoView!
     /// hold
-    var holdView: HoldView!
+    var holdView: BaseMinoView!
     /// next
     var nextView: NextView!
     /// 当前活动方块 阴影
-    var ghostView: ActiveView!
+    var ghostView: BaseMinoView!
     /// 当前活动方块
-    var activeView: ActiveView!
+    var activeView: BaseMinoView!
     /// 按键检测 最上层 view
     var keyView: KeyView!
     
@@ -39,10 +39,6 @@ class GameViewController: NSViewController {
     var ppsTextField: NSTextField!
     /// time
     var timeTextField: NSTextField!
-    
-    /// 设置
-//    @property (nonatomic, strong) SettingViewController *settingViewController
-//    @property (nonatomic, strong) NSView *settingView
 
     
     // MARK: - life cycle
@@ -57,13 +53,15 @@ class GameViewController: NSViewController {
         
         self.initView()
         self.initCoreBlockController()
+        
+        GameManager.shared.resetCoreBlockSetting()
         self.startGame()
     }
     
     override var preferredContentSize: NSSize {
         set { }
         get {
-            return NSSize(width: GameManager.shared.value(forKey: "WindowWidth", defaultValue: 800.0), height: GameManager.shared.value(forKey: "WindowHeight", defaultValue: 600.0))
+            return NSSize(width: GameManager.shared.cgFloatValue(forKey: "WindowWidth", defaultValue: 800.0), height: GameManager.shared.cgFloatValue(forKey: "WindowHeight", defaultValue: 600.0))
         }
     }
     
@@ -75,24 +73,22 @@ extension GameViewController {
     
     func initView() {
         
-        /// 设置背景色
+        /// background color
         self.view.wantsLayer = true
         self.view.layer?.backgroundColor = NSColor.cbm_black_500.cgColor
         self.view.needsDisplay = true
         
-        self.initStackView()
+        self.initBaseMinoView()
         self.initHoldAndNextView()
         self.initPieceView()
         self.initKeyView()
         self.initMessageView()
-        
-//        self.initSettingView()
     }
     
     /// 矩阵（显示已经存在的方块，不包括当前活动的）
-    func initStackView() {
+    func initBaseMinoView() {
         
-        let cellSize: Int = GameManager.shared.value(forKey: "CellSize", defaultValue: 24)
+        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
         
         /// 矩阵 背景
         self.stackGridView = StackGridView()
@@ -104,7 +100,7 @@ extension GameViewController {
         }
         
         /// 矩阵
-        self.stackView = StackView()
+        self.stackView = BaseMinoView()
         self.view.addSubview(self.stackView)
         self.stackView.snp.makeConstraints { (make) in
             make.edges.equalTo(self.stackGridView)
@@ -114,7 +110,7 @@ extension GameViewController {
     /// hold 和 next
     func initHoldAndNextView() {
         
-        let cellSize: Int = GameManager.shared.value(forKey: "CellSize", defaultValue: 24)
+        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
         
         let holdViewWidth: Int = cellSize * 5
         let holdViewHeight: Int = cellSize * 3
@@ -123,7 +119,7 @@ extension GameViewController {
         let nextViewHeight: Int = cellSize * 18
         
         /// hold
-        self.holdView = HoldView()
+        self.holdView = BaseMinoView()
         self.view.addSubview(self.holdView)
         self.holdView.snp.makeConstraints { (make) in
             make.top.equalTo(self.stackGridView).offset(cellSize)
@@ -147,14 +143,14 @@ extension GameViewController {
     func initPieceView() {
         
         /// 当前活动方块 阴影
-        self.ghostView = ActiveView()
+        self.ghostView = BaseMinoView()
         self.view.addSubview(self.ghostView)
         self.ghostView.snp.makeConstraints { (make) in
             make.edges.equalTo(self.stackGridView)
         }
         
         /// 当前活动方块
-        self.activeView = ActiveView()
+        self.activeView = BaseMinoView()
         self.view.addSubview(self.activeView)
         self.activeView.snp.makeConstraints { (make) in
             make.edges.equalTo(self.stackGridView)
@@ -178,7 +174,7 @@ extension GameViewController {
     /// 状态信息
     func initMessageView() {
         
-        let cellSize: Int = GameManager.shared.value(forKey: "CellSize", defaultValue: 24)
+        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
         var lastView: NSView!
         
         /// 游戏信息 开始 暂停
@@ -250,6 +246,23 @@ extension GameViewController {
             }
         }
         
+        /// settings button
+        do {
+            let settingButton = NSButton()
+            settingButton.title = "Settings"
+            settingButton.font = NSFont.init(name: "Menlo", size: 15)
+            settingButton.alignment = NSTextAlignment.center
+            settingButton.target = self
+            settingButton.action = #selector(GameViewController.didClickSettingButton)
+            self.view.addSubview(settingButton)
+            settingButton.snp.makeConstraints { (make) in
+                make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
+                make.centerX.equalTo(lastView)
+                make.size.equalTo(CGSize(width: 100, height: 30))
+            }
+            lastView = settingButton
+        }
+        
         lastView?.snp.makeConstraints({ (make) in
             make.bottom.equalTo(self.stackGridView.snp.bottom).offset(-cellSize / 2)
         })
@@ -288,6 +301,10 @@ extension GameViewController {
     func pressKey(down: Bool, event: NSEvent) {
         
         CoreBlockController.shared.pressKey(down: down, keyCode: Int(event.keyCode))
+    }
+    
+    @objc func didClickSettingButton() {
+        self.presentViewControllerAsModalWindow(SettingViewController())
     }
 }
 

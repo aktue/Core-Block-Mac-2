@@ -58,9 +58,9 @@ extension CoreBlockPreview {
         for i in (0 ..< 6) {
             drawInfoArray.append(
                 CoreBlockController.DrawInfo(
-                    tetro: pieces[self.grabBag[i]].tetro,
-                    cx: pieces[self.grabBag[i]].x - 2,
-                    cy: pieces[self.grabBag[i]].y + 2 + i * 3,
+                    tetro: CoreBlockData.pieces[self.grabBag[i]].tetro,
+                    cx: CoreBlockData.pieces[self.grabBag[i]].x - 2,
+                    cy: CoreBlockData.pieces[self.grabBag[i]].y + 2 + i * 3,
                     type: CoreBlockController.DrawType.preview
             ))
         }

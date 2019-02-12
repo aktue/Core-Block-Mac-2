@@ -47,7 +47,7 @@ class MinoPainter {
             [0xc1c1c1.color, 0xdddddd.color, 0xa6a6a6.color, 0x8b8b8b.color],
         ]
         
-        let cellSize: Int = GameManager.shared.value(forKey: "CellSize", defaultValue: 24)
+        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
         let spriteCanvasHeight: Int = cellSize
         let spriteCanvasWidth: Int = spriteCanvasHeight * 10
         
@@ -93,7 +93,7 @@ extension MinoPainter {
      */
     func drawCell(x: Int, y: Int, color: Int) {
         
-        let cellSize: Int = GameManager.shared.value(forKey: "CellSize", defaultValue: 24)
+        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
         let x = x * cellSize
         let y = (y - 2) * cellSize
         

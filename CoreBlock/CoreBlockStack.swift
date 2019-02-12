@@ -38,8 +38,8 @@ extension CoreBlockStack {
                 if (tetro[x][y] > 0) {
                     self.grid[x + CoreBlockPiece.shared.x][y + CoreBlockPiece.shared.floorY] = tetro[x][y]
                     // Get column for finesse
-                    if (!once || x + CoreBlockPiece.shared.x < column) {
-                        column = x + CoreBlockPiece.shared.x
+                    if (!once || x + CoreBlockPiece.shared.x < CoreBlockData.column) {
+                        CoreBlockData.column = x + CoreBlockPiece.shared.x
                         once = true
                     }
                     // Check which lines get modified
@@ -57,7 +57,7 @@ extension CoreBlockStack {
         
         // Lock out
         if (!valid) {
-            gameState = 9
+            CoreBlockData.gameState = 9
             CoreBlockController.message("LOCK OUT!", .game)
             menu(3)
             return
@@ -78,10 +78,10 @@ extension CoreBlockStack {
             // Clear the line. This basically just moves down the stack.
             // TODO Ponder during the day and see if there is a more elegant solution.
             if (count == 10) {
-                lines += 1 // NOTE stats
-                if (gameType == 3) {
-                    if (digLines[row] != -1) {
-                        digLines.remove(at: digLines[row])
+                CoreBlockData.lines += 1 // NOTE stats
+                if (CoreBlockData.gameType == 3) {
+                    if (CoreBlockData.digLines[row] != -1) {
+                        CoreBlockData.digLines.remove(at: CoreBlockData.digLines[row])
                     }
                 }
                 for y in (1 ... row).reversed() {
@@ -92,22 +92,22 @@ extension CoreBlockStack {
             }
         }
         
-        if CoreBlockPiece.shared.finesse > finesse[CoreBlockPiece.shared.index][CoreBlockPiece.shared.pos][column] {
+        if CoreBlockPiece.shared.finesse > CoreBlockData.finesse[CoreBlockPiece.shared.index][CoreBlockPiece.shared.pos][CoreBlockData.column] {
             
-            statsFinesse += CoreBlockPiece.shared.finesse - finesse[CoreBlockPiece.shared.index][CoreBlockPiece.shared.pos][column]
-            CoreBlockController.message(statsFinesse, .finesse)
+            CoreBlockData.statsFinesse += CoreBlockPiece.shared.finesse - CoreBlockData.finesse[CoreBlockPiece.shared.index][CoreBlockPiece.shared.pos][CoreBlockData.column]
+            CoreBlockController.message(CoreBlockData.statsFinesse, .finesse)
         }
         
-        piecesSet += 1 // NOTE Stats
+        CoreBlockData.piecesSet += 1 // NOTE Stats
         // TODO Might not need this (same for in init)
-        column = 0
+        CoreBlockData.column = 0
         
-        CoreBlockController.message(piecesSet, .statsPiece)
+        CoreBlockController.message(CoreBlockData.piecesSet, .statsPiece)
         
-        if (gameType != 3) {
-            CoreBlockController.message(lineLimit - lines, .statsLines)
+        if (CoreBlockData.gameType != 3) {
+            CoreBlockController.message(CoreBlockData.lineLimit - CoreBlockData.lines, .statsLines)
         } else {
-            CoreBlockController.message(digLines.count, .statsLines)
+            CoreBlockController.message(CoreBlockData.digLines.count, .statsLines)
         }
         
         self.draw()

@@ -42,14 +42,14 @@ class CoreBlockPiece {
         self.dirty = true
         
         //TODO change this
-        landed = false
+        CoreBlockData.landed = false
         
         // TODO Do this better. Make clone object func maybe.
         //for property in pieces, self.prop = piece.prop
-        self.tetro = pieces[index].tetro
-        self.kickData = pieces[index].kickData
-        self.x = pieces[index].x
-        self.y = Double(pieces[index].y)
+        self.tetro = CoreBlockData.pieces[index].tetro
+        self.kickData = CoreBlockData.pieces[index].kickData
+        self.x = CoreBlockData.pieces[index].x
+        self.y = Double(CoreBlockData.pieces[index].y)
         self.index = index
         
         // TODO ---------------- snip
@@ -61,7 +61,7 @@ class CoreBlockPiece {
         
         // Check for blockout.
         if (!self.moveValid(0, 0, self.tetro)) {
-            gameState = 9
+            CoreBlockData.gameState = 9
             CoreBlockController.message("BLOCK OUT!", .game)
             menu(3)
         }
@@ -131,13 +131,13 @@ extension CoreBlockPiece {
     
     func checkShift() {
         // Shift key pressed event.
-        if ((keysDown & flags.moveLeft) > 0 && !((lastKeys & flags.moveLeft) > 0)) {
+        if ((CoreBlockData.keysDown &  CoreBlockData.flags.moveLeft) > 0 && !((CoreBlockData.lastKeys &  CoreBlockData.flags.moveLeft) > 0)) {
             self.shiftDelay = 0
             self.arrDelay = 0
             self.shiftReleased = true
             self.shiftDir = -1
             self.finesse += 1
-        } else if ((keysDown & flags.moveRight) > 0 && !((lastKeys & flags.moveRight) > 0)) {
+        } else if ((CoreBlockData.keysDown &  CoreBlockData.flags.moveRight) > 0 && !((CoreBlockData.lastKeys &  CoreBlockData.flags.moveRight) > 0)) {
             self.shiftDelay = 0
             self.arrDelay = 0
             self.shiftReleased = true
@@ -147,9 +147,9 @@ extension CoreBlockPiece {
         // Shift key released event.
         if (
             self.shiftDir == 1 &&
-                !((keysDown & flags.moveRight) > 0) &&
-                (lastKeys & flags.moveRight) > 0 &&
-                (keysDown & flags.moveLeft) > 0
+                !((CoreBlockData.keysDown &  CoreBlockData.flags.moveRight) > 0) &&
+                (CoreBlockData.lastKeys &  CoreBlockData.flags.moveRight) > 0 &&
+                (CoreBlockData.keysDown &  CoreBlockData.flags.moveLeft) > 0
             ) {
             self.shiftDelay = 0
             self.arrDelay = 0
@@ -157,29 +157,29 @@ extension CoreBlockPiece {
             self.shiftDir = -1
         } else if (
             self.shiftDir == -1 &&
-                !((keysDown & flags.moveLeft) > 0) &&
-                (lastKeys & flags.moveLeft) > 0 &&
-                (keysDown & flags.moveRight) > 0
+                !((CoreBlockData.keysDown &  CoreBlockData.flags.moveLeft) > 0) &&
+                (CoreBlockData.lastKeys &  CoreBlockData.flags.moveLeft) > 0 &&
+                (CoreBlockData.keysDown &  CoreBlockData.flags.moveRight) > 0
             ) {
             self.shiftDelay = 0
             self.arrDelay = 0
             self.shiftReleased = true
             self.shiftDir = 1
         } else if (
-            !((keysDown & flags.moveRight) > 0) &&
-                (lastKeys & flags.moveRight) > 0 &&
-                (keysDown & flags.moveLeft) > 0
+            !((CoreBlockData.keysDown &  CoreBlockData.flags.moveRight) > 0) &&
+                (CoreBlockData.lastKeys &  CoreBlockData.flags.moveRight) > 0 &&
+                (CoreBlockData.keysDown &  CoreBlockData.flags.moveLeft) > 0
             ) {
             self.shiftDir = -1
         } else if (
-            !((keysDown & flags.moveLeft) > 0) &&
-                (lastKeys & flags.moveLeft) > 0 &&
-                (keysDown & flags.moveRight) > 0
+            !((CoreBlockData.keysDown &  CoreBlockData.flags.moveLeft) > 0) &&
+                (CoreBlockData.lastKeys &  CoreBlockData.flags.moveLeft) > 0 &&
+                (CoreBlockData.keysDown &  CoreBlockData.flags.moveRight) > 0
             ) {
             self.shiftDir = 1
         } else if (
-            (!((keysDown & flags.moveLeft) > 0) && (lastKeys & flags.moveLeft) > 0) ||
-                (!((keysDown & flags.moveRight) > 0) && (lastKeys & flags.moveRight) > 0)
+            (!((CoreBlockData.keysDown &  CoreBlockData.flags.moveLeft) > 0) && (CoreBlockData.lastKeys &  CoreBlockData.flags.moveLeft) > 0) ||
+                (!((CoreBlockData.keysDown &  CoreBlockData.flags.moveRight) > 0) && (CoreBlockData.lastKeys &  CoreBlockData.flags.moveRight) > 0)
             ) {
             self.shiftDelay = 0
             self.arrDelay = 0
@@ -194,20 +194,20 @@ extension CoreBlockPiece {
                 self.shiftDelay += 1
                 self.shiftReleased = false
                 // 2. Apply DAS delay
-            } else if (self.shiftDelay < settings.DAS) {
+            } else if (self.shiftDelay < CoreBlockData.settings.DAS) {
                 self.shiftDelay += 1
                 // 3. Once the delay is complete, move over once.
                 //     Increment delay so this doesn't run again.
-            } else if (self.shiftDelay == settings.DAS && settings.DAS != 0) {
+            } else if (self.shiftDelay == CoreBlockData.settings.DAS && CoreBlockData.settings.DAS != 0) {
                 self.shift(self.shiftDir)
-                if (settings.ARR != 0) {
+                if (CoreBlockData.settings.ARR != 0) {
                     self.shiftDelay += 1
                 }
                 // 4. Apply ARR delay
-            } else if (self.arrDelay < settings.ARR) {
+            } else if (self.arrDelay < CoreBlockData.settings.ARR) {
                 self.arrDelay += 1
                 // 5. If ARR Delay is full, move piece, and reset delay and repeat.
-            } else if (self.arrDelay == settings.ARR && settings.ARR != 0) {
+            } else if (self.arrDelay == CoreBlockData.settings.ARR && CoreBlockData.settings.ARR != 0) {
                 self.shift(self.shiftDir)
             }
         }
@@ -215,7 +215,7 @@ extension CoreBlockPiece {
     
     func shift(_ direction: Int) {
         self.arrDelay = 0
-        if (settings.ARR == 0 && self.shiftDelay == settings.DAS) {
+        if (CoreBlockData.settings.ARR == 0 && self.shiftDelay == CoreBlockData.settings.DAS) {
             for i in (1 ..< 10) {
                 if (!self.moveValid(i * direction, 0, self.tetro)) {
                     self.x += i * direction - direction
@@ -229,7 +229,7 @@ extension CoreBlockPiece {
     
     func shiftDown() {
         if (self.moveValid(0, 1, self.tetro)) {
-            let grav = Double(settings.SoftDrop)
+            let grav = Double(CoreBlockData.settings.SoftDrop)
             if (grav > 1) {
                 self.y += self.getDrop(grav)
             } else {
@@ -240,7 +240,7 @@ extension CoreBlockPiece {
     
     func hardDrop() {
         self.y += self.getDrop(Double.max)
-        self.lockDelay = settings.LockDelay
+        self.lockDelay = CoreBlockData.settings.LockDelay
     }
     
     func getDrop(_ distance: Double) -> Double {
@@ -297,26 +297,26 @@ extension CoreBlockPiece {
     
     func update() {
         if (self.moveValid(0, 1, self.tetro)) {
-            landed = false
-            if (settings.Gravity > 0) {
-                let grav = Double(settings.Gravity)
+            CoreBlockData.landed = false
+            if (CoreBlockData.settings.Gravity > 0) {
+                let grav = Double(CoreBlockData.settings.Gravity)
                 if (grav > 1) {
                     self.y += self.getDrop(grav)
                 } else {
                     self.y += grav
                 }
             } else {
-                self.y += gravity
+                self.y += CoreBlockData.gravity
             }
         } else {
-            landed = true
+            CoreBlockData.landed = true
             self.y = Double(self.floorY)
-            if (self.lockDelay >= settings.LockDelay) {
+            if (self.lockDelay >= CoreBlockData.settings.LockDelay) {
                 CoreBlockStack.shared.addPiece(self.tetro)
                 self.new(CoreBlockPreview.shared.next())
             } else {
                 // TODO: :? fe7w8lgt
-//                var a = 1 / setting['Lock Delay'][settings['Lock Delay']]
+//                var a = 1 / setting['Lock Delay'][CoreBlockData.settings['Lock Delay']]
 //                activeCtx.globalCompositeOperation = 'source-atop'
 //                activeCtx.fillStyle = 'rgba(0,0,0,' + a + ')'
 //                activeCtx.fillRect(0, 0, activeCanvas.width, activeCanvas.height)
@@ -338,7 +338,7 @@ extension CoreBlockPiece {
     }
     
     func drawGhost() {
-        if (!(settings.Ghost > 0) && !landed) {
+        if (!(CoreBlockData.settings.Ghost > 0) && !CoreBlockData.landed) {
             CoreBlockController.draw(
                 CoreBlockController.DrawInfo(
                     tetro: self.tetro,
@@ -347,7 +347,7 @@ extension CoreBlockPiece {
                     type: CoreBlockController.DrawType.ghost,
                     color: 0
             ))
-        } else if (settings.Ghost == 1 && !landed) {
+        } else if (CoreBlockData.settings.Ghost == 1 && !CoreBlockData.landed) {
             CoreBlockController.draw(
                 CoreBlockController.DrawInfo(
                     tetro: self.tetro,

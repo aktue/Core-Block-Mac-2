@@ -10,6 +10,8 @@ import Cocoa
 
 class GameManager {
     
+    // MARK: - property
+    
     static var shared: GameManager = GameManager()
     
     var settingString: String {
@@ -42,18 +44,26 @@ class GameManager {
     }
 }
 
+// MARK: - function
+
 extension GameManager {
     
-    func value(forKey key: String, defaultValue: Int) -> Int {
+    func intValue(forKey key: String, defaultValue: Int) -> Int {
         
         let rawValue: String = self.rawValue(forKey: key)
         return Int(rawValue) ?? defaultValue
     }
     
-    func value(forKey key: String, defaultValue: CGFloat) -> CGFloat {
+    func cgFloatValue(forKey key: String, defaultValue: CGFloat) -> CGFloat {
         
         let rawValue: String = self.rawValue(forKey: key)
         return CGFloat(Double(rawValue) ?? Double(defaultValue))
+    }
+    
+    func doubleValue(forKey key: String, defaultValue: Double) -> Double {
+        
+        let rawValue: String = self.rawValue(forKey: key)
+        return Double(rawValue) ?? defaultValue
     }
     
     func rawValue(forKey key: String) -> String {
@@ -73,5 +83,26 @@ extension GameManager {
             }
         }
         return ""
+    }
+    
+    func resetCoreBlockSetting() {
+        
+        /*
+         var settings = (
+         DAS: 6,
+         ARR: 0,
+         Gravity: 0.0156,
+         SoftDrop: 200.0,
+         LockDelay: 30,
+         Ghost: 1
+         )
+         */
+        
+        CoreBlockData.settings.DAS = self.intValue(forKey: "DAS", defaultValue: 6)
+        CoreBlockData.settings.ARR = self.intValue(forKey: "ARR", defaultValue: 0)
+        CoreBlockData.settings.Gravity = self.doubleValue(forKey: "Gravity", defaultValue: 0.0156)
+        CoreBlockData.settings.SoftDrop = self.doubleValue(forKey: "SoftDrop", defaultValue: 200.0)
+        CoreBlockData.settings.LockDelay = self.intValue(forKey: "LockDelay", defaultValue: 30)
+        CoreBlockData.settings.Ghost = self.intValue(forKey: "Ghost", defaultValue: 1)
     }
 }

@@ -6,244 +6,255 @@
 //  Copyright © 2019 Yihua Zhou. All rights reserved.
 //
 
+/*
+ README:
+ 
+ how to use this CoreBlock?
+ 
+ - implement CoreBlockControllerProtocol, to show game view or message.
+   - tetro.y should -2 when you draw it (because the grid size is 10 x 22).
+ 
+ - set CoreBlockData.settings
+ - set CoreBlockData.binds
+ - call CoreBlock.shared.new(gameType gt: Int)
+ - call CoreBlock.shared.pressKey(down: Bool, keyCode: Int)
+ 
+ var
+ 
+ */
+
 import Foundation
 
-// MARK: - global variable
 
-/**
- * Playfield.
- */
-var column: Int = 0
+// MARK: - data
 
-/**
- * Piece data
- */
-
-// NOTE y values are inverted since our matrix counts from top to bottom.
-var kickData: [[[Int]]] = [
-    [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
-    [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]],
-    [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
-    [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]],
-]
-var kickDataI: [[[Int]]] = [
-    [[0, 0], [-1, 0], [2, 0], [-1, 0], [2, 0]],
-    [[-1, 0], [0, 0], [0, 0], [0, -1], [0, 2]],
-    [[-1, -1], [1, -1], [-2, -1], [1, 0], [-2, 0]],
-    [[0, -1], [0, -1], [0, -1], [0, 1], [0, -2]],
-]
-// TODO get rid of this lol.
-var kickDataO: [[[Int]]] = [[[0, 0]], [[0, 0]], [[0, 0]], [[0, 0]]]
-
-// Define shapes and spawns.
-var PieceI = (
-    index: 0,
-    x: 2,
-    y: -1,
-    kickData: kickDataI,
-    tetro: [
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0],
-    ]
-)
-var PieceJ = (
-    index: 1,
-    x: 3,
-    y: 0,
-    kickData: kickData,
-    tetro: [[2, 2, 0], [0, 2, 0], [0, 2, 0]]
-)
-var PieceL = (
-    index: 2,
-    x: 3,
-    y: 0,
-    kickData: kickData,
-    tetro: [[0, 3, 0], [0, 3, 0], [3, 3, 0]]
-)
-var PieceO = (
-    index: 3,
-    x: 4,
-    y: 0,
-    kickData: kickDataO,
-    tetro: [[4, 4], [4, 4]]
-)
-var PieceS = (
-    index: 4,
-    x: 3,
-    y: 0,
-    kickData: kickData,
-    tetro: [[0, 5, 0], [5, 5, 0], [5, 0, 0]]
-)
-var PieceT = (
-    index: 5,
-    x: 3,
-    y: 0,
-    kickData: kickData,
-    tetro: [[0, 6, 0], [6, 6, 0], [0, 6, 0]]
-)
-var PieceZ = (
-    index: 6,
-    x: 3,
-    y: 0,
-    kickData: kickData,
-    tetro: [[7, 0, 0], [7, 7, 0], [0, 7, 0]]
-)
-var pieces = [PieceI, PieceJ, PieceL, PieceO, PieceS, PieceT, PieceZ]
-
-// Finesse data
-// index x orientatio x column = finesse
-// finesse[0][0][4] = 1
-// TODO double check these.
-var finesse: [[[Int]]] = [
-    [
-        [1, 2, 1, 0, 1, 2, 1],
-        [2, 2, 2, 2, 1, 1, 2, 2, 2, 2],
-        [1, 2, 1, 0, 1, 2, 1],
-        [2, 2, 2, 2, 1, 1, 2, 2, 2, 2],
-        ],
-    [
-        [1, 2, 1, 0, 1, 2, 2, 1],
-        [2, 2, 3, 2, 1, 2, 3, 3, 2],
-        [2, 3, 2, 1, 2, 3, 3, 2],
-        [2, 3, 2, 1, 2, 3, 3, 2, 2],
-        ],
-    [
-        [1, 2, 1, 0, 1, 2, 2, 1],
-        [2, 2, 3, 2, 1, 2, 3, 3, 2],
-        [2, 3, 2, 1, 2, 3, 3, 2],
-        [2, 3, 2, 1, 2, 3, 3, 2, 2],
-        ],
-    [
-        [1, 2, 2, 1, 0, 1, 2, 2, 1],
-        [1, 2, 2, 1, 0, 1, 2, 2, 1],
-        [1, 2, 2, 1, 0, 1, 2, 2, 1],
-        [1, 2, 2, 1, 0, 1, 2, 2, 1],
-        ],
-    [
-        [1, 2, 1, 0, 1, 2, 2, 1],
-        [2, 2, 2, 1, 1, 2, 3, 2, 2],
-        [1, 2, 1, 0, 1, 2, 2, 1],
-        [2, 2, 2, 1, 1, 2, 3, 2, 2],
-        ],
-    [
-        [1, 2, 1, 0, 1, 2, 2, 1],
-        [2, 2, 3, 2, 1, 2, 3, 3, 2],
-        [2, 3, 2, 1, 2, 3, 3, 2],
-        [2, 3, 2, 1, 2, 3, 3, 2, 2],
-        ],
-    [
-        [1, 2, 1, 0, 1, 2, 2, 1],
-        [2, 2, 2, 1, 1, 2, 3, 2, 2],
-        [1, 2, 1, 0, 1, 2, 2, 1],
-        [2, 2, 2, 1, 1, 2, 3, 2, 2],
-        ],
-]
-
-/**
- * Gameplay specific vars.
- */
-/// default gravity
-var gravity: Double = 1.0 / 64
-
-var settings = (
-    DAS: 6,
-    ARR: 0,
-    Gravity: 1.0 / 64,
-    SoftDrop: 200.0,
-    LockDelay: 30,
-    Ghost: 1
-)
-
-/// total frames
-var frame = 0
-
-/**
- *Pausing variables
- */
-
-var startPauseTime = 0
-var pauseTime = 0
-
-/**
- * 0 = normal
- * 1 = win
- * 2 = countdown
- * 3 = game not played
- * 9 = loss
- */
-var gameState = 3
-
-var paused = false
-/// while sprint, this is 40
-var lineLimit = 0
-
-/*
- -1 : seed
-  x : frame
- */
-var replayKeys: [Int: Int] = [:]
-var watchingReplay = false
-
-/*
- -1: Replay
- 0 : Sprint
- 3 : Dig race
- */
-var gameType = 0
-
-//TODO Make dirty flags for each canvas, draw them all at once during frame call.
-// var dirtyHold, dirtyActive, dirtyStack, dirtyPreview
-/// mark current piece location, draw if different
-var lastX = 0, lastY = 0, lastPos = 0, landed = false
-
-// Stats
-var lines = 0
-var statsFinesse = 0
-var piecesSet = 0
-var startTime = 0
-var digLines: [Int] = []
-
-// Keys
-/// press down keys
-var keysDown = 0
-var lastKeys = 0
-
-/// these codes are inner values, as constant, do not change it, different with outer
-var binds = (
-//    pause: 32,
-//    moveLeft: 1,
-//    moveRight: 2,
-//    moveDown: 3,
-//    hardDrop: 4,
-//    holdPiece: 11,
-//    rotRight: 22,
-//    rotLeft: 21,
-//    rot180: 23,
-//    retry: 31
-    pause: 12,
-    moveLeft: 38,
-    moveRight: 37,
-    moveDown: 40,
-    hardDrop: 34,
-    holdPiece: 49,
-    rotRight: 3,
-    rotLeft: 2,
-    rot180: 1,
-    retry: 15
-)
-var flags = (
-    hardDrop: 1,
-    moveRight: 2,
-    moveLeft: 4,
-    moveDown: 8,
-    holdPiece: 16,
-    rotRight: 32,
-    rotLeft: 64,
-    rot180: 128
-)
+class CoreBlockData {
+    
+    /**
+     * Playfield.
+     */
+    static var column: Int = 0
+    
+    /**
+     * Piece data
+     */
+    
+    // NOTE y values are inverted since our matrix counts from top to bottom.
+    static var kickData: [[[Int]]] = [
+        [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+        [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]],
+        [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+        [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]],
+        ]
+    static var kickDataI: [[[Int]]] = [
+        [[0, 0], [-1, 0], [2, 0], [-1, 0], [2, 0]],
+        [[-1, 0], [0, 0], [0, 0], [0, -1], [0, 2]],
+        [[-1, -1], [1, -1], [-2, -1], [1, 0], [-2, 0]],
+        [[0, -1], [0, -1], [0, -1], [0, 1], [0, -2]],
+        ]
+    // TODO get rid of this lol.
+    static var kickDataO: [[[Int]]] = [[[0, 0]], [[0, 0]], [[0, 0]], [[0, 0]]]
+    
+    // Define shapes and spawns.
+    static var PieceI = (
+        index: 0,
+        x: 2,
+        y: -1,
+        kickData: kickDataI,
+        tetro: [
+            [0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            ]
+    )
+    static var PieceJ = (
+        index: 1,
+        x: 3,
+        y: 0,
+        kickData: kickData,
+        tetro: [[2, 2, 0], [0, 2, 0], [0, 2, 0]]
+    )
+    static var PieceL = (
+        index: 2,
+        x: 3,
+        y: 0,
+        kickData: kickData,
+        tetro: [[0, 3, 0], [0, 3, 0], [3, 3, 0]]
+    )
+    static var PieceO = (
+        index: 3,
+        x: 4,
+        y: 0,
+        kickData: kickDataO,
+        tetro: [[4, 4], [4, 4]]
+    )
+    static var PieceS = (
+        index: 4,
+        x: 3,
+        y: 0,
+        kickData: kickData,
+        tetro: [[0, 5, 0], [5, 5, 0], [5, 0, 0]]
+    )
+    static var PieceT = (
+        index: 5,
+        x: 3,
+        y: 0,
+        kickData: kickData,
+        tetro: [[0, 6, 0], [6, 6, 0], [0, 6, 0]]
+    )
+    static var PieceZ = (
+        index: 6,
+        x: 3,
+        y: 0,
+        kickData: kickData,
+        tetro: [[7, 0, 0], [7, 7, 0], [0, 7, 0]]
+    )
+    static var pieces = [PieceI, PieceJ, PieceL, PieceO, PieceS, PieceT, PieceZ]
+    
+    // Finesse data
+    // index x orientatio x CoreBlockData.column = finesse
+    // finesse[0][0][4] = 1
+    // TODO double check these.
+    static var finesse: [[[Int]]] = [
+        [
+            [1, 2, 1, 0, 1, 2, 1],
+            [2, 2, 2, 2, 1, 1, 2, 2, 2, 2],
+            [1, 2, 1, 0, 1, 2, 1],
+            [2, 2, 2, 2, 1, 1, 2, 2, 2, 2],
+            ],
+        [
+            [1, 2, 1, 0, 1, 2, 2, 1],
+            [2, 2, 3, 2, 1, 2, 3, 3, 2],
+            [2, 3, 2, 1, 2, 3, 3, 2],
+            [2, 3, 2, 1, 2, 3, 3, 2, 2],
+            ],
+        [
+            [1, 2, 1, 0, 1, 2, 2, 1],
+            [2, 2, 3, 2, 1, 2, 3, 3, 2],
+            [2, 3, 2, 1, 2, 3, 3, 2],
+            [2, 3, 2, 1, 2, 3, 3, 2, 2],
+            ],
+        [
+            [1, 2, 2, 1, 0, 1, 2, 2, 1],
+            [1, 2, 2, 1, 0, 1, 2, 2, 1],
+            [1, 2, 2, 1, 0, 1, 2, 2, 1],
+            [1, 2, 2, 1, 0, 1, 2, 2, 1],
+            ],
+        [
+            [1, 2, 1, 0, 1, 2, 2, 1],
+            [2, 2, 2, 1, 1, 2, 3, 2, 2],
+            [1, 2, 1, 0, 1, 2, 2, 1],
+            [2, 2, 2, 1, 1, 2, 3, 2, 2],
+            ],
+        [
+            [1, 2, 1, 0, 1, 2, 2, 1],
+            [2, 2, 3, 2, 1, 2, 3, 3, 2],
+            [2, 3, 2, 1, 2, 3, 3, 2],
+            [2, 3, 2, 1, 2, 3, 3, 2, 2],
+            ],
+        [
+            [1, 2, 1, 0, 1, 2, 2, 1],
+            [2, 2, 2, 1, 1, 2, 3, 2, 2],
+            [1, 2, 1, 0, 1, 2, 2, 1],
+            [2, 2, 2, 1, 1, 2, 3, 2, 2],
+            ],
+        ]
+    
+    /**
+     * Gameplay specific vars.
+     */
+    /// default gravity
+    static var gravity: Double = 1.0 / 64
+    
+    static var settings = (
+        DAS: 6,
+        ARR: 0,
+        Gravity: 0.0156, /// 1.0 / 64
+        SoftDrop: 200.0,
+        LockDelay: 30,
+        Ghost: 1
+    )
+    
+    /// total frames
+    static var frame = 0
+    
+    /**
+     *Pausing variables
+     */
+    
+    static var startPauseTime = 0
+    static var pauseTime = 0
+    
+    /**
+     * 0 = normal
+     * 1 = win
+     * 2 = countdown
+     * 3 = game not played
+     * 9 = loss
+     */
+    static var gameState = 3
+    
+    static var paused = false
+    /// while sprint, this is 40
+    static var lineLimit = 0
+    
+    /*
+     -1 : seed
+     x : frame
+     */
+    static var replayKeys: [Int: Int] = [:]
+    static var watchingReplay = false
+    
+    /*
+     -1: Replay
+     0 : Sprint
+     3 : Dig race
+     */
+    static var gameType = 0
+    
+    //TODO Make dirty flags for each canvas, draw them all at once during frame call.
+    // var dirtyHold, dirtyActive, dirtyStack, dirtyPreview
+    /// mark current piece location, draw if different
+    static var lastX = 0, lastY = 0, lastPos = 0, landed = false
+    
+    // Stats
+    static var lines = 0
+    static var statsFinesse = 0
+    static var piecesSet = 0
+    static var startTime = 0
+    static var digLines: [Int] = []
+    
+    // Keys
+    /// press down keys
+    static var keysDown = 0
+    static var lastKeys = 0
+    
+    static var binds = (
+        pause: 12,      /// q
+        moveLeft: 38,   /// j
+        moveRight: 37,  /// l
+        moveDown: 40,   /// k
+        hardDrop: 34,   /// i
+        holdPiece: 49,  /// space
+        rotRight: 3,    /// f
+        rotLeft: 2,     /// d
+        rot180: 1,      /// s
+        retry: 15       /// r
+    )
+    
+    static var flags = (
+        hardDrop: 1,
+        moveRight: 2,
+        moveLeft: 4,
+        moveDown: 8,
+        holdPiece: 16,
+        rotRight: 32,
+        rotLeft: 64,
+        rot180: 128
+    )
+}
 
 
 /**
@@ -300,56 +311,56 @@ class CoreBlockController {
      */
     func new(gameType gt: Int) {
         if (gt == -1) {
-            watchingReplay = true
+            CoreBlockData.watchingReplay = true
         } else {
-            watchingReplay = false
-            replayKeys = [:]
+            CoreBlockData.watchingReplay = false
+            CoreBlockData.replayKeys = [:]
             // TODO Make new seed and rng method.
-            replayKeys[-1] = Int(arc4random()) * 2147483645 + 1
-            gameType = gt
+            CoreBlockData.replayKeys[-1] = Int(arc4random()) * 2147483645 + 1
+            CoreBlockData.gameType = gt
         }
         
-        lineLimit = 40
+        CoreBlockData.lineLimit = 40
         
         //Reset
-        column = 0
-        keysDown = 0
-        lastKeys = 0
+        CoreBlockData.column = 0
+        CoreBlockData.keysDown = 0
+        CoreBlockData.lastKeys = 0
         //TODO Check if needed.
         CoreBlockPiece.shared.shiftDir = 0
         CoreBlockPiece.shared.shiftReleased = true
         
-        startPauseTime = 0
-        pauseTime = 0
-        paused = false
+        CoreBlockData.startPauseTime = 0
+        CoreBlockData.pauseTime = 0
+        CoreBlockData.paused = false
         
-        CoreBlockRng.shared.seed = replayKeys[-1]!
-        frame = 0
-        lastPos = Int.undefined
+        CoreBlockRng.shared.seed = CoreBlockData.replayKeys[-1]!
+        CoreBlockData.frame = 0
+        CoreBlockData.lastPos = Int.undefined
         CoreBlockStack.shared.new(10, 22)
         CoreBlockHold.shared.piece = Int.undefined
-        startTime = Date.now()
+        CoreBlockData.startTime = Date.now()
         
         CoreBlockPreview.shared.new()
         
-        statsFinesse = 0
-        lines = 0
-        piecesSet = 0
+        CoreBlockData.statsFinesse = 0
+        CoreBlockData.lines = 0
+        CoreBlockData.piecesSet = 0
         
-        CoreBlockController.message(statsFinesse, .finesse)
-        CoreBlockController.message(piecesSet, .statsPiece)
-        CoreBlockController.message(lineLimit - lines, .statsLines)
+        CoreBlockController.message(CoreBlockData.statsFinesse, .finesse)
+        CoreBlockController.message(CoreBlockData.piecesSet, .statsPiece)
+        CoreBlockController.message(CoreBlockData.lineLimit - CoreBlockData.lines, .statsLines)
         statistics()
         CoreBlockController.clear(CoreBlockController.DrawType.stack)
         CoreBlockController.clear(CoreBlockController.DrawType.active)
         CoreBlockController.clear(CoreBlockController.DrawType.hold)
         
-        if (gameType == 3) {
+        if (CoreBlockData.gameType == 3) {
             // Dig Race
             // make ten random numbers, make sure next isn't the same as last?
             //TODO make into function or own file.
             
-            digLines = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+            CoreBlockData.digLines = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
             
             CoreBlockController.message(10, .statsLines)
             var randomNums: [Int] = []
@@ -370,26 +381,26 @@ class CoreBlockController {
         menu()
         
         // Only start a loop if one is not running already.
-        if (gameState == 3) {
-            gameState = 2
+        if (CoreBlockData.gameState == 3) {
+            CoreBlockData.gameState = 2
             startGameLoop()
         } else {
-            gameState = 2
+            CoreBlockData.gameState = 2
         }
     }
     
     func pause() {
-        if (gameState == 0) {
-            paused = true
-            startPauseTime = Date.now()
+        if (CoreBlockData.gameState == 0) {
+            CoreBlockData.paused = true
+            CoreBlockData.startPauseTime = Date.now()
             CoreBlockController.message("Paused", .game)
             menu(4)
         }
     }
     
     func unpause() {
-        paused = false
-        pauseTime += Date.now() - startPauseTime
+        CoreBlockData.paused = false
+        CoreBlockData.pauseTime += Date.now() - CoreBlockData.startPauseTime
         CoreBlockController.message("", .game)
         menu()
     }
@@ -399,13 +410,13 @@ class CoreBlockController {
      */
     func statistics() {
         
-        let time = Date.now() - startTime - pauseTime
+        let time = Date.now() - CoreBlockData.startTime - CoreBlockData.pauseTime
         let seconds = time / 1000
         let microseconds = (time / 10) % 100
         CoreBlockController.message((seconds < 10 ? "0" : "") + String(seconds) +
             (microseconds < 10 ? ":0" : ":") + String(microseconds), .statsTime)
         
-        let pps: Double = piecesSet > 0 ? Double(piecesSet) / Double(time) * 1000 : 0
+        let pps: Double = CoreBlockData.piecesSet > 0 ? Double(CoreBlockData.piecesSet) / Double(time) * 1000 : 0
         CoreBlockController.message(String(format: "%.2f", pps), .pps)
     }
     
@@ -418,56 +429,56 @@ class CoreBlockController {
             //TODO if active, prevent default for binded keys
             //if (bindsArr.indexOf(keyCode) !== -1)
             //  e.preventDefault()
-            if (keyCode == binds.pause) {
-                if (paused) {
+            if (keyCode == CoreBlockData.binds.pause) {
+                if (CoreBlockData.paused) {
                     unpause()
                 } else {
                     pause()
                 }
             }
-            if (keyCode == binds.retry) {
-                CoreBlockController.shared.new(gameType: gameType)
+            if (keyCode == CoreBlockData.binds.retry) {
+                CoreBlockController.shared.new(gameType: CoreBlockData.gameType)
             }
-            if (!watchingReplay) {
-                if (keyCode == binds.moveLeft) {
-                    keysDown |= flags.moveLeft
+            if (!CoreBlockData.watchingReplay) {
+                if (keyCode == CoreBlockData.binds.moveLeft) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.moveLeft
                     //CoreBlockPiece.shared.finesse++
-                } else if (keyCode == binds.moveRight) {
-                    keysDown |= flags.moveRight
-                } else if (keyCode == binds.moveDown) {
-                    keysDown |= flags.moveDown
-                } else if (keyCode == binds.hardDrop) {
-                    keysDown |= flags.hardDrop
-                } else if (keyCode == binds.rotRight) {
-                    keysDown |= flags.rotRight
-                } else if (keyCode == binds.rotLeft) {
-                    keysDown |= flags.rotLeft
-                } else if (keyCode == binds.rot180) {
-                    keysDown |= flags.rot180
-                } else if (keyCode == binds.holdPiece) {
-                    keysDown |= flags.holdPiece
+                } else if (keyCode == CoreBlockData.binds.moveRight) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.moveRight
+                } else if (keyCode == CoreBlockData.binds.moveDown) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.moveDown
+                } else if (keyCode == CoreBlockData.binds.hardDrop) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.hardDrop
+                } else if (keyCode == CoreBlockData.binds.rotRight) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.rotRight
+                } else if (keyCode == CoreBlockData.binds.rotLeft) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.rotLeft
+                } else if (keyCode == CoreBlockData.binds.rot180) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.rot180
+                } else if (keyCode == CoreBlockData.binds.holdPiece) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.holdPiece
                 }
             }
         }
         /// key up
         else {
-            if (!watchingReplay) {
-                if (keyCode == binds.moveLeft && (keysDown & flags.moveLeft) > 0) {
-                    keysDown ^= flags.moveLeft
-                } else if (keyCode == binds.moveRight && (keysDown & flags.moveRight) > 0) {
-                    keysDown ^= flags.moveRight
-                } else if (keyCode == binds.moveDown && (keysDown & flags.moveDown) > 0) {
-                    keysDown ^= flags.moveDown
-                } else if (keyCode == binds.hardDrop && (keysDown & flags.hardDrop) > 0) {
-                    keysDown ^= flags.hardDrop
-                } else if (keyCode == binds.rotRight && (keysDown & flags.rotRight) > 0) {
-                    keysDown ^= flags.rotRight
-                } else if (keyCode == binds.rotLeft && (keysDown & flags.rotLeft) > 0) {
-                    keysDown ^= flags.rotLeft
-                } else if (keyCode == binds.rot180 && (keysDown & flags.rot180) > 0) {
-                    keysDown ^= flags.rot180
-                } else if (keyCode == binds.holdPiece && (keysDown & flags.holdPiece) > 0) {
-                    keysDown ^= flags.holdPiece
+            if (!CoreBlockData.watchingReplay) {
+                if (keyCode == CoreBlockData.binds.moveLeft && (CoreBlockData.keysDown & CoreBlockData.flags.moveLeft) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.moveLeft
+                } else if (keyCode == CoreBlockData.binds.moveRight && (CoreBlockData.keysDown & CoreBlockData.flags.moveRight) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.moveRight
+                } else if (keyCode == CoreBlockData.binds.moveDown && (CoreBlockData.keysDown & CoreBlockData.flags.moveDown) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.moveDown
+                } else if (keyCode == CoreBlockData.binds.hardDrop && (CoreBlockData.keysDown & CoreBlockData.flags.hardDrop) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.hardDrop
+                } else if (keyCode == CoreBlockData.binds.rotRight && (CoreBlockData.keysDown & CoreBlockData.flags.rotRight) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.rotRight
+                } else if (keyCode == CoreBlockData.binds.rotLeft && (CoreBlockData.keysDown & CoreBlockData.flags.rotLeft) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.rotLeft
+                } else if (keyCode == CoreBlockData.binds.rot180 && (CoreBlockData.keysDown & CoreBlockData.flags.rot180) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.rot180
+                } else if (keyCode == CoreBlockData.binds.holdPiece && (CoreBlockData.keysDown & CoreBlockData.flags.holdPiece) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.holdPiece
                 }
             }
         }
@@ -540,34 +551,34 @@ extension CoreBlockController {
      */
     func update() {
         //TODO Das preservation broken.
-        if (lastKeys != keysDown && !watchingReplay) {
-            replayKeys[frame] = keysDown
-        } else if let value = replayKeys[frame] {
-            keysDown = value
+        if (CoreBlockData.lastKeys != CoreBlockData.keysDown && !CoreBlockData.watchingReplay) {
+            CoreBlockData.replayKeys[CoreBlockData.frame] = CoreBlockData.keysDown
+        } else if let value = CoreBlockData.replayKeys[CoreBlockData.frame] {
+            CoreBlockData.keysDown = value
         }
         
-        if (!((lastKeys & flags.holdPiece) > 0) && (flags.holdPiece & keysDown) > 0) {
+        if (!((CoreBlockData.lastKeys & CoreBlockData.flags.holdPiece) > 0) && (CoreBlockData.flags.holdPiece & CoreBlockData.keysDown) > 0) {
             CoreBlockPiece.shared.hold()
         }
         
-        if ((flags.rotLeft & keysDown) > 0 && !((lastKeys & flags.rotLeft) > 0)) {
+        if ((CoreBlockData.flags.rotLeft & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotLeft) > 0)) {
             CoreBlockPiece.shared.rotate(-1)
             CoreBlockPiece.shared.finesse += 1
-        } else if ((flags.rotRight & keysDown) > 0 && !((lastKeys & flags.rotRight) > 0)) {
+        } else if ((CoreBlockData.flags.rotRight & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotRight) > 0)) {
             CoreBlockPiece.shared.rotate(1)
             CoreBlockPiece.shared.finesse += 1
-        } else if ((flags.rot180 & keysDown) > 0 && !((lastKeys & flags.rot180) > 0)) {
+        } else if ((CoreBlockData.flags.rot180 & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rot180) > 0)) {
             CoreBlockPiece.shared.rotate(2)
             CoreBlockPiece.shared.finesse += 1
         }
         
         CoreBlockPiece.shared.checkShift()
         
-        if (flags.moveDown & keysDown) > 0 {
+        if (CoreBlockData.flags.moveDown & CoreBlockData.keysDown) > 0 {
             CoreBlockPiece.shared.shiftDown()
             //CoreBlockPiece.shared.finesse++
         }
-        if (!((lastKeys & flags.hardDrop) > 0) && (flags.hardDrop & keysDown) > 0) {
+        if (!((CoreBlockData.lastKeys & CoreBlockData.flags.hardDrop) > 0) && (CoreBlockData.flags.hardDrop & CoreBlockData.keysDown) > 0) {
             CoreBlockPiece.shared.hardDrop()
         }
         
@@ -575,15 +586,15 @@ extension CoreBlockController {
         
         // Win
         // TODO
-        if (gameType != 3) {
-            if (lines >= lineLimit) {
-                gameState = 1
+        if (CoreBlockData.gameType != 3) {
+            if (CoreBlockData.lines >= CoreBlockData.lineLimit) {
+                CoreBlockData.gameState = 1
                 CoreBlockController.message("GREAT!", .game)
                 menu(3)
             }
         } else {
-            if (digLines.count == 0) {
-                gameState = 1
+            if (CoreBlockData.digLines.count == 0) {
+                CoreBlockData.gameState = 1
                 CoreBlockController.message("GREAT!", .game)
                 menu(3)
             }
@@ -591,64 +602,64 @@ extension CoreBlockController {
         
         statistics()
         
-        if (lastKeys != keysDown) {
-            lastKeys = keysDown
+        if (CoreBlockData.lastKeys != CoreBlockData.keysDown) {
+            CoreBlockData.lastKeys = CoreBlockData.keysDown
         }
     }
     
     func gameLoop() {
         
         //TODO check to see how pause works in replays.
-        frame += 1
+        CoreBlockData.frame += 1
         
-        if (gameState == 0) {
+        if (CoreBlockData.gameState == 0) {
             // Playing
             
-            if (!paused) {
+            if (!CoreBlockData.paused) {
                 update()
             }
             
-            // TODO improve this with 'dirty' flags.
+            // TODO improve this with 'dirty' CoreBlockData.flags.
             if (
-                CoreBlockPiece.shared.x != lastX ||
-                    CoreBlockPiece.shared.floorY != lastY ||
-                    CoreBlockPiece.shared.pos != lastPos ||
+                CoreBlockPiece.shared.x != CoreBlockData.lastX ||
+                    CoreBlockPiece.shared.floorY != CoreBlockData.lastY ||
+                    CoreBlockPiece.shared.pos != CoreBlockData.lastPos ||
                     CoreBlockPiece.shared.dirty
                 ) {
                 CoreBlockController.clear(CoreBlockController.DrawType.active)
                 CoreBlockPiece.shared.drawGhost()
                 CoreBlockPiece.shared.draw()
             }
-            lastX = CoreBlockPiece.shared.x
-            lastY = CoreBlockPiece.shared.floorY
-            lastPos = CoreBlockPiece.shared.pos
+            CoreBlockData.lastX = CoreBlockPiece.shared.x
+            CoreBlockData.lastY = CoreBlockPiece.shared.floorY
+            CoreBlockData.lastPos = CoreBlockPiece.shared.pos
             CoreBlockPiece.shared.dirty = false
-        } else if (gameState == 2) {
+        } else if (CoreBlockData.gameState == 2) {
             // Count Down
-            if (frame < 50) {
+            if (CoreBlockData.frame < 50) {
                 CoreBlockController.message("READY", .game)
-            } else if (frame < 100) {
+            } else if (CoreBlockData.frame < 100) {
                 CoreBlockController.message("GO!", .game)
             } else {
                 CoreBlockController.message("", .game)
-                gameState = 0
-                startTime = Date.now()
+                CoreBlockData.gameState = 0
+                CoreBlockData.startTime = Date.now()
                 CoreBlockPiece.shared.new(CoreBlockPreview.shared.next())
             }
             // DAS Preload
-            if (lastKeys != keysDown && !watchingReplay) {
-                replayKeys[frame] = keysDown
-            } else if let value = replayKeys[frame] {
-                keysDown = value
+            if (CoreBlockData.lastKeys != CoreBlockData.keysDown && !CoreBlockData.watchingReplay) {
+                CoreBlockData.replayKeys[CoreBlockData.frame] = CoreBlockData.keysDown
+            } else if let value = CoreBlockData.replayKeys[CoreBlockData.frame] {
+                CoreBlockData.keysDown = value
             }
-            if (keysDown & flags.moveLeft) > 0 {
-                lastKeys = keysDown
-                CoreBlockPiece.shared.shiftDelay = settings.DAS
+            if (CoreBlockData.keysDown & CoreBlockData.flags.moveLeft) > 0 {
+                CoreBlockData.lastKeys = CoreBlockData.keysDown
+                CoreBlockPiece.shared.shiftDelay = CoreBlockData.settings.DAS
                 CoreBlockPiece.shared.shiftReleased = false
                 CoreBlockPiece.shared.shiftDir = -1
-            } else if (keysDown & flags.moveRight) > 0 {
-                lastKeys = keysDown
-                CoreBlockPiece.shared.shiftDelay = settings.DAS
+            } else if (CoreBlockData.keysDown & CoreBlockData.flags.moveRight) > 0 {
+                CoreBlockData.lastKeys = CoreBlockData.keysDown
+                CoreBlockPiece.shared.shiftDelay = CoreBlockData.settings.DAS
                 CoreBlockPiece.shared.shiftReleased = false
                 CoreBlockPiece.shared.shiftDir = 1
             }

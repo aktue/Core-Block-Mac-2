@@ -23,11 +23,9 @@
 		D791504A2211A78F008B6620 /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79150492211A78F008B6620 /* GameManager.swift */; };
 		D7CC8F5B2212612C00E1CD6C /* StackGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F5A2212612C00E1CD6C /* StackGridView.swift */; };
 		D7CC8F5E2212624900E1CD6C /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F5D2212624900E1CD6C /* Utility.swift */; };
-		D7CC8F60221264E600E1CD6C /* StackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F5F221264E600E1CD6C /* StackView.swift */; };
-		D7CC8F6222126AAD00E1CD6C /* HoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6122126AAD00E1CD6C /* HoldView.swift */; };
 		D7CC8F6422126AFB00E1CD6C /* NextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6322126AFB00E1CD6C /* NextView.swift */; };
 		D7CC8F6622126BAB00E1CD6C /* BaseMinoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6522126BAB00E1CD6C /* BaseMinoView.swift */; };
-		D7CC8F6822126C1100E1CD6C /* ActiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6722126C1100E1CD6C /* ActiveView.swift */; };
+		D7CC8F6A2212C29800E1CD6C /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F692212C29800E1CD6C /* SettingViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,11 +50,9 @@
 		D79150492211A78F008B6620 /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
 		D7CC8F5A2212612C00E1CD6C /* StackGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackGridView.swift; sourceTree = "<group>"; };
 		D7CC8F5D2212624900E1CD6C /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
-		D7CC8F5F221264E600E1CD6C /* StackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackView.swift; sourceTree = "<group>"; };
-		D7CC8F6122126AAD00E1CD6C /* HoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldView.swift; sourceTree = "<group>"; };
 		D7CC8F6322126AFB00E1CD6C /* NextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextView.swift; sourceTree = "<group>"; };
 		D7CC8F6522126BAB00E1CD6C /* BaseMinoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseMinoView.swift; sourceTree = "<group>"; };
-		D7CC8F6722126C1100E1CD6C /* ActiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveView.swift; sourceTree = "<group>"; };
+		D7CC8F692212C29800E1CD6C /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +136,7 @@
 				D79150482211A773008B6620 /* Manager */,
 				D72BA14222117A89001CB4A0 /* Subview */,
 				D72BA14022116A5D001CB4A0 /* GameViewController.swift */,
+				D7CC8F692212C29800E1CD6C /* SettingViewController.swift */,
 			);
 			path = Game;
 			sourceTree = "<group>";
@@ -151,10 +148,7 @@
 				D79150462211A3DF008B6620 /* MinoPainter.swift */,
 				D7CC8F6522126BAB00E1CD6C /* BaseMinoView.swift */,
 				D7CC8F5A2212612C00E1CD6C /* StackGridView.swift */,
-				D7CC8F5F221264E600E1CD6C /* StackView.swift */,
-				D7CC8F6122126AAD00E1CD6C /* HoldView.swift */,
 				D7CC8F6322126AFB00E1CD6C /* NextView.swift */,
-				D7CC8F6722126C1100E1CD6C /* ActiveView.swift */,
 			);
 			path = Subview;
 			sourceTree = "<group>";
@@ -287,9 +281,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D72BA13C221109D4001CB4A0 /* CoreBlockPreview.swift in Sources */,
-				D7CC8F60221264E600E1CD6C /* StackView.swift in Sources */,
 				D7CC8F5B2212612C00E1CD6C /* StackGridView.swift in Sources */,
 				D7CC8F6422126AFB00E1CD6C /* NextView.swift in Sources */,
+				D7CC8F6A2212C29800E1CD6C /* SettingViewController.swift in Sources */,
 				D72BA123221015F3001CB4A0 /* AppDelegate.swift in Sources */,
 				D72BA13A2210FD2F001CB4A0 /* CoreBlockStack.swift in Sources */,
 				D72BA1342210254D001CB4A0 /* CoreBlockTetris.swift in Sources */,
@@ -298,8 +292,6 @@
 				D7CC8F6622126BAB00E1CD6C /* BaseMinoView.swift in Sources */,
 				D7CC8F5E2212624900E1CD6C /* Utility.swift in Sources */,
 				D79150472211A3DF008B6620 /* MinoPainter.swift in Sources */,
-				D7CC8F6822126C1100E1CD6C /* ActiveView.swift in Sources */,
-				D7CC8F6222126AAD00E1CD6C /* HoldView.swift in Sources */,
 				D72BA138221055FC001CB4A0 /* CoreBlockHold.swift in Sources */,
 				D791504A2211A78F008B6620 /* GameManager.swift in Sources */,
 				D72BA13222101EFA001CB4A0 /* CoreBlockPiece.swift in Sources */,
