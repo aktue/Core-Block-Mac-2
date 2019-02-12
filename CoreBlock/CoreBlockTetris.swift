@@ -235,12 +235,12 @@ class CoreBlockData {
         pause: 12,      /// q
         moveLeft: 38,   /// j
         moveRight: 37,  /// l
-        moveDown: 40,   /// k
+        softDrop: 40,   /// k
         hardDrop: 34,   /// i
-        holdPiece: 49,  /// space
-        rotRight: 3,    /// f
-        rotLeft: 2,     /// d
-        rot180: 1,      /// s
+        hold: 49,  /// space
+        rotateRight: 3,    /// f
+        rotateLeft: 2,     /// d
+        rotate180: 1,      /// s
         retry: 15       /// r
     )
     
@@ -248,11 +248,11 @@ class CoreBlockData {
         hardDrop: 1,
         moveRight: 2,
         moveLeft: 4,
-        moveDown: 8,
-        holdPiece: 16,
-        rotRight: 32,
-        rotLeft: 64,
-        rot180: 128
+        softDrop: 8,
+        hold: 16,
+        rotateRight: 32,
+        rotateLeft: 64,
+        rotate180: 128
     )
 }
 
@@ -445,18 +445,18 @@ class CoreBlockController {
                     //CoreBlockPiece.shared.finesse++
                 } else if (keyCode == CoreBlockData.binds.moveRight) {
                     CoreBlockData.keysDown |= CoreBlockData.flags.moveRight
-                } else if (keyCode == CoreBlockData.binds.moveDown) {
-                    CoreBlockData.keysDown |= CoreBlockData.flags.moveDown
+                } else if (keyCode == CoreBlockData.binds.softDrop) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.softDrop
                 } else if (keyCode == CoreBlockData.binds.hardDrop) {
                     CoreBlockData.keysDown |= CoreBlockData.flags.hardDrop
-                } else if (keyCode == CoreBlockData.binds.rotRight) {
-                    CoreBlockData.keysDown |= CoreBlockData.flags.rotRight
-                } else if (keyCode == CoreBlockData.binds.rotLeft) {
-                    CoreBlockData.keysDown |= CoreBlockData.flags.rotLeft
-                } else if (keyCode == CoreBlockData.binds.rot180) {
-                    CoreBlockData.keysDown |= CoreBlockData.flags.rot180
-                } else if (keyCode == CoreBlockData.binds.holdPiece) {
-                    CoreBlockData.keysDown |= CoreBlockData.flags.holdPiece
+                } else if (keyCode == CoreBlockData.binds.rotateRight) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.rotateRight
+                } else if (keyCode == CoreBlockData.binds.rotateLeft) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.rotateLeft
+                } else if (keyCode == CoreBlockData.binds.rotate180) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.rotate180
+                } else if (keyCode == CoreBlockData.binds.hold) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.hold
                 }
             }
         }
@@ -467,18 +467,18 @@ class CoreBlockController {
                     CoreBlockData.keysDown ^= CoreBlockData.flags.moveLeft
                 } else if (keyCode == CoreBlockData.binds.moveRight && (CoreBlockData.keysDown & CoreBlockData.flags.moveRight) > 0) {
                     CoreBlockData.keysDown ^= CoreBlockData.flags.moveRight
-                } else if (keyCode == CoreBlockData.binds.moveDown && (CoreBlockData.keysDown & CoreBlockData.flags.moveDown) > 0) {
-                    CoreBlockData.keysDown ^= CoreBlockData.flags.moveDown
+                } else if (keyCode == CoreBlockData.binds.softDrop && (CoreBlockData.keysDown & CoreBlockData.flags.softDrop) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.softDrop
                 } else if (keyCode == CoreBlockData.binds.hardDrop && (CoreBlockData.keysDown & CoreBlockData.flags.hardDrop) > 0) {
                     CoreBlockData.keysDown ^= CoreBlockData.flags.hardDrop
-                } else if (keyCode == CoreBlockData.binds.rotRight && (CoreBlockData.keysDown & CoreBlockData.flags.rotRight) > 0) {
-                    CoreBlockData.keysDown ^= CoreBlockData.flags.rotRight
-                } else if (keyCode == CoreBlockData.binds.rotLeft && (CoreBlockData.keysDown & CoreBlockData.flags.rotLeft) > 0) {
-                    CoreBlockData.keysDown ^= CoreBlockData.flags.rotLeft
-                } else if (keyCode == CoreBlockData.binds.rot180 && (CoreBlockData.keysDown & CoreBlockData.flags.rot180) > 0) {
-                    CoreBlockData.keysDown ^= CoreBlockData.flags.rot180
-                } else if (keyCode == CoreBlockData.binds.holdPiece && (CoreBlockData.keysDown & CoreBlockData.flags.holdPiece) > 0) {
-                    CoreBlockData.keysDown ^= CoreBlockData.flags.holdPiece
+                } else if (keyCode == CoreBlockData.binds.rotateRight && (CoreBlockData.keysDown & CoreBlockData.flags.rotateRight) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.rotateRight
+                } else if (keyCode == CoreBlockData.binds.rotateLeft && (CoreBlockData.keysDown & CoreBlockData.flags.rotateLeft) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.rotateLeft
+                } else if (keyCode == CoreBlockData.binds.rotate180 && (CoreBlockData.keysDown & CoreBlockData.flags.rotate180) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.rotate180
+                } else if (keyCode == CoreBlockData.binds.hold && (CoreBlockData.keysDown & CoreBlockData.flags.hold) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.hold
                 }
             }
         }
@@ -557,24 +557,24 @@ extension CoreBlockController {
             CoreBlockData.keysDown = value
         }
         
-        if (!((CoreBlockData.lastKeys & CoreBlockData.flags.holdPiece) > 0) && (CoreBlockData.flags.holdPiece & CoreBlockData.keysDown) > 0) {
+        if (!((CoreBlockData.lastKeys & CoreBlockData.flags.hold) > 0) && (CoreBlockData.flags.hold & CoreBlockData.keysDown) > 0) {
             CoreBlockPiece.shared.hold()
         }
         
-        if ((CoreBlockData.flags.rotLeft & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotLeft) > 0)) {
+        if ((CoreBlockData.flags.rotateLeft & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotateLeft) > 0)) {
             CoreBlockPiece.shared.rotate(-1)
             CoreBlockPiece.shared.finesse += 1
-        } else if ((CoreBlockData.flags.rotRight & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotRight) > 0)) {
+        } else if ((CoreBlockData.flags.rotateRight & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotateRight) > 0)) {
             CoreBlockPiece.shared.rotate(1)
             CoreBlockPiece.shared.finesse += 1
-        } else if ((CoreBlockData.flags.rot180 & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rot180) > 0)) {
+        } else if ((CoreBlockData.flags.rotate180 & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotate180) > 0)) {
             CoreBlockPiece.shared.rotate(2)
             CoreBlockPiece.shared.finesse += 1
         }
         
         CoreBlockPiece.shared.checkShift()
         
-        if (CoreBlockData.flags.moveDown & CoreBlockData.keysDown) > 0 {
+        if (CoreBlockData.flags.softDrop & CoreBlockData.keysDown) > 0 {
             CoreBlockPiece.shared.shiftDown()
             //CoreBlockPiece.shared.finesse++
         }

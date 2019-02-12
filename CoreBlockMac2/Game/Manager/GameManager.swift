@@ -57,17 +57,17 @@ class GameManager {
                 /// l
                 moveRight: 37
                 /// k
-                moveDown: 40
+                softDrop: 40
                 /// i
                 hardDrop: 34
                 /// space
-                holdPiece: 49
+                hold: 49
                 /// f
-                rotRight: 3
+                rotateRight: 3
                 /// d
-                rotLeft: 2
+                rotateLeft: 2
                 /// s
-                rot180: 1
+                rotate180: 1
                 /// r
                 retry: 15
                 """
@@ -170,6 +170,7 @@ extension GameManager {
     func setKeyCode(_ keyCode: Int, forKey key: String) {
         
         var newControlString: String = ""
+        var hasFoundKey: Bool = false
         
         /// for each line
         for lineString: Substring in self.controlString.split(separator: "\n") {
@@ -183,10 +184,15 @@ extension GameManager {
                     wordArray[0].lowercased().contains(key.lowercased()) {
                     
                     newControlString += wordArray[0] + ": " + String(keyCode) + "\n"
+                    hasFoundKey = true
                     continue
                 }
             }
             newControlString += lineString + "\n"
+        }
+        
+        if !hasFoundKey {
+            newControlString += key + ": " + String(keyCode) + "\n"
         }
         
         self.controlString = newControlString
@@ -199,12 +205,12 @@ extension GameManager {
          pause: 12,      /// q
          moveLeft: 38,   /// j
          moveRight: 37,  /// l
-         moveDown: 40,   /// k
+         softDrop: 40,   /// k
          hardDrop: 34,   /// i
-         holdPiece: 49,  /// space
-         rotRight: 3,    /// f
-         rotLeft: 2,     /// d
-         rot180: 1,      /// s
+         hold: 49,  /// space
+         rotateRight: 3,    /// f
+         rotateLeft: 2,     /// d
+         rotate180: 1,      /// s
          retry: 15       /// r
          )
          */
@@ -212,12 +218,12 @@ extension GameManager {
         CoreBlockData.binds.pause = self.keyCode(forKey: "pause")
         CoreBlockData.binds.moveLeft = self.keyCode(forKey: "moveLeft")
         CoreBlockData.binds.moveRight = self.keyCode(forKey: "moveRight")
-        CoreBlockData.binds.moveDown = self.keyCode(forKey: "moveDown")
+        CoreBlockData.binds.softDrop = self.keyCode(forKey: "softDrop")
         CoreBlockData.binds.hardDrop = self.keyCode(forKey: "hardDrop")
-        CoreBlockData.binds.holdPiece = self.keyCode(forKey: "holdPiece")
-        CoreBlockData.binds.rotRight = self.keyCode(forKey: "rotRight")
-        CoreBlockData.binds.rotLeft = self.keyCode(forKey: "rotLeft")
-        CoreBlockData.binds.rot180 = self.keyCode(forKey: "rot180")
+        CoreBlockData.binds.hold = self.keyCode(forKey: "hold")
+        CoreBlockData.binds.rotateRight = self.keyCode(forKey: "rotateRight")
+        CoreBlockData.binds.rotateLeft = self.keyCode(forKey: "rotateLeft")
+        CoreBlockData.binds.rotate180 = self.keyCode(forKey: "rotate180")
         CoreBlockData.binds.retry = self.keyCode(forKey: "retry")
     }
     
@@ -227,12 +233,12 @@ extension GameManager {
             "pause",
             "moveLeft",
             "moveRight",
-            "moveDown",
+            "softDrop",
             "hardDrop",
-            "holdPiece",
-            "rotRight",
-            "rotLeft",
-            "rot180",
+            "hold",
+            "rotateRight",
+            "rotateLeft",
+            "rotate180",
             "retry",
         ]
     }

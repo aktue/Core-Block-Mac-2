@@ -46,7 +46,7 @@ class ControlViewController: NSViewController {
     override var preferredContentSize: NSSize {
         set { }
         get {
-            return NSSize(width: 400, height: 600)
+            return NSSize(width: 400, height: GameManager.shared.allControlKeyNameArray().count * 50)
         }
     }
     
@@ -97,7 +97,7 @@ extension ControlViewController {
             backView.needsDisplay = true
             self.view.addSubview(backView)
             backView.snp.makeConstraints { (make) in
-                make.top.equalTo(lastView?.snp.bottom ?? 50)
+                make.top.equalTo(lastView?.snp.bottom ?? 0)
                 make.width.centerX.equalToSuperview()
                 make.height.equalTo(50)
 //                make.size.equalTo(NSMakeSize(300, 50))
@@ -107,7 +107,7 @@ extension ControlViewController {
             do {
                 let textField: NSTextField = NSTextField()
                 textField.stringValue = kayName
-                textField.font = NSFont.init(name: "Menlo", size: 15)
+                textField.font = NSFont.init(name: "Menlo", size: 20)
                 textField.alignment = NSTextAlignment.right
                 textField.textColor = NSColor.cbm_black_500
                 textField.backgroundColor = NSColor.cbm_clear
@@ -127,7 +127,7 @@ extension ControlViewController {
                 let textField: NSTextField = NSTextField()
                 textField.tag = self.baseKeyCodeTextFieldTag + index
                 textField.stringValue = String(GameManager.shared.keyCode(forKey: kayName))
-                textField.font = NSFont.init(name: "Menlo", size: 15)
+                textField.font = NSFont.init(name: "Menlo", size: 20)
                 textField.alignment = NSTextAlignment.left
                 textField.textColor = NSColor.cbm_black_500
                 textField.backgroundColor = NSColor.cbm_clear

@@ -67,7 +67,7 @@ extension SettingViewController {
         
         self.gameSettingTextField = NSTextView()
         self.gameSettingTextField.string = GameManager.shared.settingString
-        self.gameSettingTextField.font = NSFont.init(name: "Menlo", size: 15)
+        self.gameSettingTextField.font = NSFont.init(name: "Menlo", size: 20)
         self.gameSettingTextField.textColor = NSColor.cbm_gray_875
         self.gameSettingTextField.backgroundColor = NSColor.cbm_gray_250
         self.view.addSubview(self.gameSettingTextField)

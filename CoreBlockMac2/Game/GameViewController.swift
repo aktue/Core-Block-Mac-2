@@ -251,7 +251,7 @@ extension GameViewController {
         do {
             let settingButton = NSButton()
             settingButton.title = "Settings"
-            settingButton.font = NSFont.init(name: "Menlo", size: 15)
+            settingButton.font = NSFont.init(name: "Menlo", size: 18)
             settingButton.alignment = NSTextAlignment.center
             settingButton.target = self
             settingButton.action = #selector(GameViewController.didClickSettingButton)
@@ -259,7 +259,7 @@ extension GameViewController {
             settingButton.snp.makeConstraints { (make) in
                 make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
                 make.centerX.equalTo(lastView)
-                make.size.equalTo(CGSize(width: 100, height: 30))
+                make.size.equalTo(CGSize(width: 110, height: 30))
             }
             lastView = settingButton
         }
@@ -268,7 +268,7 @@ extension GameViewController {
         do {
             let settingButton = NSButton()
             settingButton.title = "Controlls"
-            settingButton.font = NSFont.init(name: "Menlo", size: 15)
+            settingButton.font = NSFont.init(name: "Menlo", size: 18)
             settingButton.alignment = NSTextAlignment.center
             settingButton.target = self
             settingButton.action = #selector(GameViewController.didClickControlButton)
@@ -276,7 +276,7 @@ extension GameViewController {
             settingButton.snp.makeConstraints { (make) in
                 make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
                 make.centerX.equalTo(lastView)
-                make.size.equalTo(CGSize(width: 100, height: 30))
+                make.size.equalTo(CGSize(width: 110, height: 30))
             }
             lastView = settingButton
         }
