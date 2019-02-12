@@ -42,9 +42,44 @@ class GameManager {
             UserDefaults.standard.setValue(newValue, forKey: "GameManager.settingString")
         }
     }
+    
+    var controlString: String {
+        get {
+            if let value = UserDefaults.standard.value(forKey: "GameManager.controlString") as? String,
+                !value.isEmpty {
+                return value
+            } else {
+                return """
+                /// q
+                pause: 12
+                /// j
+                moveLeft: 38
+                /// l
+                moveRight: 37
+                /// k
+                moveDown: 40
+                /// i
+                hardDrop: 34
+                /// space
+                holdPiece: 49
+                /// f
+                rotRight: 3
+                /// d
+                rotLeft: 2
+                /// s
+                rot180: 1
+                /// r
+                retry: 15
+                """
+            }
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: "GameManager.controlString")
+        }
+    }
 }
 
-// MARK: - function
+// MARK: - function setting
 
 extension GameManager {
     
@@ -104,5 +139,101 @@ extension GameManager {
         CoreBlockData.settings.SoftDrop = self.doubleValue(forKey: "SoftDrop", defaultValue: 200.0)
         CoreBlockData.settings.LockDelay = self.intValue(forKey: "LockDelay", defaultValue: 30)
         CoreBlockData.settings.Ghost = self.intValue(forKey: "Ghost", defaultValue: 1)
+    }
+}
+
+// MARK: - function control
+
+extension GameManager {
+    
+    func keyCode(forKey key: String) -> Int {
+        
+        /// for each line
+        for lineString: Substring in self.controlString.split(separator: "\n") {
+            
+            /// if not comment
+            if !lineString.hasPrefix("//") {
+                
+                let wordArray: [Substring] = lineString.split(separator: ":")
+                /// get key, value
+                if wordArray.count >= 2,
+                    wordArray[0].lowercased().contains(key.lowercased()) {
+                    
+                    let rawValue: String = String(wordArray[1]).trimmingCharacters(in: [" "])
+                    return Int(rawValue) ?? -1
+                }
+            }
+        }
+        return -1
+    }
+    
+    func setKeyCode(_ keyCode: Int, forKey key: String) {
+        
+        var newControlString: String = ""
+        
+        /// for each line
+        for lineString: Substring in self.controlString.split(separator: "\n") {
+            
+            /// if not comment
+            if !lineString.hasPrefix("//") {
+                
+                let wordArray: [Substring] = lineString.split(separator: ":")
+                /// get key, value
+                if wordArray.count >= 2,
+                    wordArray[0].lowercased().contains(key.lowercased()) {
+                    
+                    newControlString += wordArray[0] + ": " + String(keyCode) + "\n"
+                    continue
+                }
+            }
+            newControlString += lineString + "\n"
+        }
+        
+        self.controlString = newControlString
+    }
+    
+    func resetCoreBlockControl() {
+        
+        /*
+         static var binds = (
+         pause: 12,      /// q
+         moveLeft: 38,   /// j
+         moveRight: 37,  /// l
+         moveDown: 40,   /// k
+         hardDrop: 34,   /// i
+         holdPiece: 49,  /// space
+         rotRight: 3,    /// f
+         rotLeft: 2,     /// d
+         rot180: 1,      /// s
+         retry: 15       /// r
+         )
+         */
+        
+        CoreBlockData.binds.pause = self.keyCode(forKey: "pause")
+        CoreBlockData.binds.moveLeft = self.keyCode(forKey: "moveLeft")
+        CoreBlockData.binds.moveRight = self.keyCode(forKey: "moveRight")
+        CoreBlockData.binds.moveDown = self.keyCode(forKey: "moveDown")
+        CoreBlockData.binds.hardDrop = self.keyCode(forKey: "hardDrop")
+        CoreBlockData.binds.holdPiece = self.keyCode(forKey: "holdPiece")
+        CoreBlockData.binds.rotRight = self.keyCode(forKey: "rotRight")
+        CoreBlockData.binds.rotLeft = self.keyCode(forKey: "rotLeft")
+        CoreBlockData.binds.rot180 = self.keyCode(forKey: "rot180")
+        CoreBlockData.binds.retry = self.keyCode(forKey: "retry")
+    }
+    
+    func allControlKeyNameArray() -> [String] {
+        
+        return [
+            "pause",
+            "moveLeft",
+            "moveRight",
+            "moveDown",
+            "hardDrop",
+            "holdPiece",
+            "rotRight",
+            "rotLeft",
+            "rot180",
+            "retry",
+        ]
     }
 }

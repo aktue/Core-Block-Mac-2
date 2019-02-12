@@ -29,6 +29,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             make.edges.equalToSuperview()
         }
         
+//        self.clickWindow()
+        
         //    self.window.alphaValue = 0.4
         //    self.window.hasShadow = NO
     }
@@ -40,3 +42,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 }
 
+
+//// MARK: - click window
+//
+//extension AppDelegate {
+//
+//    func clickWindow() {
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//
+////            let mousePoint: NSPoint = NSEvent.mouseLocation
+//
+//            var windowFrame = self.window.frame
+//            windowFrame.origin.x += self.window.frame.size.width / 2
+//            windowFrame.origin.y += self.window.frame.size.height / 2
+//
+//            self.postMouseEvent(button: CGMouseButton.left, type: CGEventType.leftMouseDown, point: windowFrame.origin)
+//            self.postMouseEvent(button: CGMouseButton.left, type: CGEventType.leftMouseUp, point: windowFrame.origin)
+//
+////            self.postMouseEvent(button: CGMouseButton.left, type: CGEventType.mouseMoved, point: mousePoint)
+//        }
+//    }
+//
+//    func postMouseEvent(button: CGMouseButton, type: CGEventType, point: CGPoint) {
+//
+//        if let theEvent: CGEvent = CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: point, mouseButton: button) {
+//
+//            theEvent.setIntegerValueField(CGEventField.mouseEventClickState, value: 1)
+//            theEvent.type = type
+//            theEvent.post(tap: CGEventTapLocation.cghidEventTap)
+//        }
+//    }
+//}

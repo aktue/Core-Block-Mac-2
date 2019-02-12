@@ -6,8 +6,8 @@
 //  Copyright © 2019 Yihua Zhou. All rights reserved.
 //
 
-import Foundation
-
-func menu(_ index: Int = 0) {
-    print("menu index: \(index)")
-}
+//import Foundation
+//
+//func menu(_ index: Int = 0) {
+//    print("menu index: \(index)")
+//}

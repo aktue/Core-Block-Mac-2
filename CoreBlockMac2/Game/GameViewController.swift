@@ -55,6 +55,7 @@ class GameViewController: NSViewController {
         self.initCoreBlockController()
         
         GameManager.shared.resetCoreBlockSetting()
+        GameManager.shared.resetCoreBlockControl()
         self.startGame()
     }
     
@@ -116,7 +117,7 @@ extension GameViewController {
         let holdViewHeight: Int = cellSize * 3
         
         let nextViewWidth: Int = cellSize * 5
-        let nextViewHeight: Int = cellSize * 18
+        let nextViewHeight: Int = cellSize * 3 * 5
         
         /// hold
         self.holdView = BaseMinoView()
@@ -263,8 +264,25 @@ extension GameViewController {
             lastView = settingButton
         }
         
+        /// controls button
+        do {
+            let settingButton = NSButton()
+            settingButton.title = "Controlls"
+            settingButton.font = NSFont.init(name: "Menlo", size: 15)
+            settingButton.alignment = NSTextAlignment.center
+            settingButton.target = self
+            settingButton.action = #selector(GameViewController.didClickControlButton)
+            self.view.addSubview(settingButton)
+            settingButton.snp.makeConstraints { (make) in
+                make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
+                make.centerX.equalTo(lastView)
+                make.size.equalTo(CGSize(width: 100, height: 30))
+            }
+            lastView = settingButton
+        }
+        
         lastView?.snp.makeConstraints({ (make) in
-            make.bottom.equalTo(self.stackGridView.snp.bottom).offset(-cellSize / 2)
+            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-cellSize / 2)
         })
     }
     
@@ -306,6 +324,11 @@ extension GameViewController {
     @objc func didClickSettingButton() {
         self.presentViewControllerAsModalWindow(SettingViewController())
     }
+    
+    @objc func didClickControlButton() {
+        self.presentViewControllerAsModalWindow(ControlViewController())
+    }
+
 }
 
 

@@ -41,7 +41,7 @@ class SettingViewController: NSViewController {
     override var preferredContentSize: NSSize {
         set { }
         get {
-            return NSSize(width: GameManager.shared.cgFloatValue(forKey: "WindowWidth", defaultValue: 800.0), height: GameManager.shared.cgFloatValue(forKey: "WindowHeight", defaultValue: 600.0))
+            return NSSize(width: 400, height: 500)
         }
     }
     
@@ -57,30 +57,23 @@ extension SettingViewController {
         
         /// background color
         self.view.wantsLayer = true
-        self.view.layer?.backgroundColor = NSColor.cbm_black_500.withAlphaComponent(0.5).cgColor
+        self.view.layer?.backgroundColor = NSColor.cbm_gray_250.cgColor
         self.view.needsDisplay = true
         
         self.initGameSettingView()
     }
     
-    /// 矩阵（显示已经存在的方块，不包括当前活动的）
     func initGameSettingView() {
-        
-        let backView: NSView = NSView()
-        self.view.addSubview(backView)
-        backView.snp.makeConstraints { (make) in
-            make.top.left.bottom.equalToSuperview()
-            make.right.equalTo(self.view.snp.centerX)
-        }
         
         self.gameSettingTextField = NSTextView()
         self.gameSettingTextField.string = GameManager.shared.settingString
         self.gameSettingTextField.font = NSFont.init(name: "Menlo", size: 15)
         self.gameSettingTextField.textColor = NSColor.cbm_gray_875
-        self.gameSettingTextField.backgroundColor = NSColor.cbm_white_500
-        backView.addSubview(self.gameSettingTextField)
+        self.gameSettingTextField.backgroundColor = NSColor.cbm_gray_250
+        self.view.addSubview(self.gameSettingTextField)
         self.gameSettingTextField.snp.makeConstraints { (make) in
-            make.edges.equalTo(NSEdgeInsetsMake(50, 50, 50, 50))
+            make.edges.equalToSuperview()
+//            make.edges.equalTo(NSEdgeInsetsMake(50, 50, 50, 50))
         }
     }
 }

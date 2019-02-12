@@ -378,7 +378,7 @@ class CoreBlockController {
             CoreBlockStack.shared.draw()
         }
         
-        menu()
+//        menu()
         
         // Only start a loop if one is not running already.
         if (CoreBlockData.gameState == 3) {
@@ -394,7 +394,7 @@ class CoreBlockController {
             CoreBlockData.paused = true
             CoreBlockData.startPauseTime = Date.now()
             CoreBlockController.message("Paused", .game)
-            menu(4)
+//            menu(4)
         }
     }
     
@@ -402,7 +402,7 @@ class CoreBlockController {
         CoreBlockData.paused = false
         CoreBlockData.pauseTime += Date.now() - CoreBlockData.startPauseTime
         CoreBlockController.message("", .game)
-        menu()
+//        menu()
     }
     
     /**
@@ -590,13 +590,13 @@ extension CoreBlockController {
             if (CoreBlockData.lines >= CoreBlockData.lineLimit) {
                 CoreBlockData.gameState = 1
                 CoreBlockController.message("GREAT!", .game)
-                menu(3)
+//                menu(3)
             }
         } else {
             if (CoreBlockData.digLines.count == 0) {
                 CoreBlockData.gameState = 1
                 CoreBlockController.message("GREAT!", .game)
-                menu(3)
+//                menu(3)
             }
         }
         

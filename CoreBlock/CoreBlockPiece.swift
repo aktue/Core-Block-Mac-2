@@ -63,7 +63,7 @@ class CoreBlockPiece {
         if (!self.moveValid(0, 0, self.tetro)) {
             CoreBlockData.gameState = 9
             CoreBlockController.message("BLOCK OUT!", .game)
-            menu(3)
+//            menu(3)
         }
     }
 }

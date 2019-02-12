@@ -26,6 +26,7 @@
 		D7CC8F6422126AFB00E1CD6C /* NextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6322126AFB00E1CD6C /* NextView.swift */; };
 		D7CC8F6622126BAB00E1CD6C /* BaseMinoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6522126BAB00E1CD6C /* BaseMinoView.swift */; };
 		D7CC8F6A2212C29800E1CD6C /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F692212C29800E1CD6C /* SettingViewController.swift */; };
+		D7CC8F6C2212DFA000E1CD6C /* ControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6B2212DFA000E1CD6C /* ControlViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		D7CC8F6322126AFB00E1CD6C /* NextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextView.swift; sourceTree = "<group>"; };
 		D7CC8F6522126BAB00E1CD6C /* BaseMinoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseMinoView.swift; sourceTree = "<group>"; };
 		D7CC8F692212C29800E1CD6C /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		D7CC8F6B2212DFA000E1CD6C /* ControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 				D72BA14222117A89001CB4A0 /* Subview */,
 				D72BA14022116A5D001CB4A0 /* GameViewController.swift */,
 				D7CC8F692212C29800E1CD6C /* SettingViewController.swift */,
+				D7CC8F6B2212DFA000E1CD6C /* ControlViewController.swift */,
 			);
 			path = Game;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				D72BA1342210254D001CB4A0 /* CoreBlockTetris.swift in Sources */,
 				D72BA14122116A5D001CB4A0 /* GameViewController.swift in Sources */,
 				D72BA14422117AA4001CB4A0 /* KeyView.swift in Sources */,
+				D7CC8F6C2212DFA000E1CD6C /* ControlViewController.swift in Sources */,
 				D7CC8F6622126BAB00E1CD6C /* BaseMinoView.swift in Sources */,
 				D7CC8F5E2212624900E1CD6C /* Utility.swift in Sources */,
 				D79150472211A3DF008B6620 /* MinoPainter.swift in Sources */,

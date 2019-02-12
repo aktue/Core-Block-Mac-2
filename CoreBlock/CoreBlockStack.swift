@@ -59,7 +59,7 @@ extension CoreBlockStack {
         if (!valid) {
             CoreBlockData.gameState = 9
             CoreBlockController.message("LOCK OUT!", .game)
-            menu(3)
+//            menu(3)
             return
         }
         
