@@ -388,11 +388,11 @@ extension GameViewController {
     }
     
     @objc func didClickSettingButton() {
-        self.presentViewControllerAsModalWindow(SettingViewController())
+        self.presentAsModalWindow(SettingViewController())
     }
     
     @objc func didClickControlButton() {
-        self.presentViewControllerAsModalWindow(ControlViewController())
+        self.presentAsModalWindow(ControlViewController())
     }
     
     @objc func didClickGameButton(button: NSButton) {

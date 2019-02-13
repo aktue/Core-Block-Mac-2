@@ -201,14 +201,14 @@ extension NSButton {
     var titleTextColor : NSColor {
         get {
             let attrTitle = self.attributedTitle
-            return attrTitle.attribute(NSAttributedStringKey.foregroundColor, at: 0, effectiveRange: nil) as! NSColor
+            return attrTitle.attribute(NSAttributedString.Key.foregroundColor, at: 0, effectiveRange: nil) as! NSColor
         }
         
         set(newColor) {
             let attrTitle = NSMutableAttributedString(attributedString: self.attributedTitle)
             let titleRange = NSMakeRange(0, self.title.count)
             
-            attrTitle.addAttributes([NSAttributedStringKey.foregroundColor: newColor], range: titleRange)
+            attrTitle.addAttributes([NSAttributedString.Key.foregroundColor: newColor], range: titleRange)
             self.attributedTitle = attrTitle
         }
     }

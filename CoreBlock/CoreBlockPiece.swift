@@ -255,7 +255,7 @@ extension CoreBlockPiece {
     
     func hold() {
         
-        var temp = CoreBlockHold.shared.piece
+        let temp = CoreBlockHold.shared.piece
         if (!self.held) {
             if (CoreBlockHold.shared.piece != Int.undefined) {
                 CoreBlockHold.shared.piece = self.index

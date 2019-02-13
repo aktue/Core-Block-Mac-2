@@ -376,7 +376,7 @@ class CoreBlockController {
             
             CoreBlockController.message(10, .statsLines)
             var randomNums: [Int] = []
-            for i in (0 ..< 10) {
+            for _ in (0 ..< 10) {
                 let random = Int(CoreBlockRng.shared.next() * 10)
                 randomNums.append(random)
             }
