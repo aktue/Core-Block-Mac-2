@@ -84,6 +84,7 @@ extension GameViewController {
         self.initPieceView()
         self.initKeyView()
         self.initMessageView()
+        self.initGameButton()
     }
     
     /// 矩阵（显示已经存在的方块，不包括当前活动的）
@@ -113,10 +114,10 @@ extension GameViewController {
         
         let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
         
-        let holdViewWidth: Int = cellSize * 5
+        let holdViewWidth: Int = cellSize * 4
         let holdViewHeight: Int = cellSize * 3
         
-        let nextViewWidth: Int = cellSize * 5
+        let nextViewWidth: Int = cellSize * 4
         let nextViewHeight: Int = cellSize * 3 * 5
         
         /// hold
@@ -134,7 +135,7 @@ extension GameViewController {
         self.view.addSubview(self.nextView)
         self.nextView.snp.makeConstraints { (make) in
             make.top.equalTo(self.stackGridView).offset(cellSize)
-            make.left.equalTo(self.stackGridView.snp.right)
+            make.left.equalTo(self.stackGridView.snp.right).offset(cellSize / 2)
             make.width.equalTo(nextViewWidth)
             make.height.equalTo(nextViewHeight)
         }
@@ -249,39 +250,66 @@ extension GameViewController {
         
         /// settings button
         do {
-            let settingButton = NSButton()
-            settingButton.title = "Settings"
-            settingButton.font = NSFont.init(name: "Menlo", size: 18)
-            settingButton.alignment = NSTextAlignment.center
-            settingButton.target = self
-            settingButton.action = #selector(GameViewController.didClickSettingButton)
-            self.view.addSubview(settingButton)
+            let settingButton = self.button(withTitle: "Settings", action: #selector(GameViewController.didClickSettingButton))
             settingButton.snp.makeConstraints { (make) in
-                make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
+                make.top.equalTo(lastView.snp.bottom).offset(5)
                 make.centerX.equalTo(lastView)
-                make.size.equalTo(CGSize(width: 110, height: 30))
+                make.size.equalTo(CGSize(width: 110, height: 25))
             }
             lastView = settingButton
         }
         
         /// controls button
         do {
-            let settingButton = NSButton()
-            settingButton.title = "Controlls"
-            settingButton.font = NSFont.init(name: "Menlo", size: 18)
-            settingButton.alignment = NSTextAlignment.center
-            settingButton.target = self
-            settingButton.action = #selector(GameViewController.didClickControlButton)
-            self.view.addSubview(settingButton)
-            settingButton.snp.makeConstraints { (make) in
-                make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
+            let controlButton = self.button(withTitle: "Controlls", action: #selector(GameViewController.didClickControlButton))
+            controlButton.snp.makeConstraints { (make) in
+                make.top.equalTo(lastView.snp.bottom).offset(5)
                 make.centerX.equalTo(lastView)
-                make.size.equalTo(CGSize(width: 110, height: 30))
+                make.size.equalTo(CGSize(width: 110, height: 25))
             }
-            lastView = settingButton
+            lastView = controlButton
         }
         
         lastView?.snp.makeConstraints({ (make) in
+            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-cellSize / 2)
+        })
+    }
+    
+    func initGameButton() {
+        
+        var lastView: NSView!
+        
+        let gameTypeArray: [(title: String, type: Int)] = [
+            (
+                title: "Sprint",
+                type: 0
+            ),
+            (
+                title: "Sprint 1K",
+                type: 1
+            ),
+            (
+                title: "Replay",
+                type: -1
+            ),
+        ]
+        
+        /// game button
+        for item: (title: String, type: Int) in gameTypeArray {
+            
+            let gameButton = self.button(withTitle: item.title, tag: item.type, action: #selector(GameViewController.didClickGameButton))
+            gameButton.snp.makeConstraints { (make) in
+                if let lastView = lastView {
+                    make.top.equalTo(lastView.snp.bottom).offset(5)
+                    make.centerX.equalTo(lastView)
+                }
+                make.size.equalTo(CGSize(width: 110, height: 25))
+            }
+            lastView = gameButton
+        }
+        
+        lastView?.snp.makeConstraints({ (make) in
+            make.centerX.equalTo(self.nextView)
             make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-cellSize / 2)
         })
     }
@@ -299,6 +327,27 @@ extension GameViewController {
         self.view.addSubview(textField)
         return textField
     }
+    
+    func button(withTitle title: String = "", fontSize: CGFloat = 17, tag: Int = 0, action: Selector) -> NSView {
+        
+        let textField: NSTextField = self.textField(withTitle: title, fontSize: fontSize)
+        textField.textColor = NSColor.cbm_white_500
+        textField.alignment = NSTextAlignment.center
+        textField.backgroundColor = NSColor.cbm_gray_500
+        self.view.addSubview(textField)
+        
+        let button = NSButton()
+        button.title = ""
+        button.tag = tag
+        button.alphaValue = 0.2
+        button.target = self
+        button.action = action
+        textField.addSubview(button)
+        button.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        return textField
+    }
 }
 
 
@@ -311,9 +360,9 @@ extension GameViewController {
         CoreBlockController.shared.delegate = self
     }
     
-    func startGame() {
+    func startGame(gameType: Int = 0) {
         
-        CoreBlockController.shared.new(gameType: 0)
+        CoreBlockController.shared.new(gameType: gameType)
     }
     
     func pressKey(down: Bool, event: NSEvent) {
@@ -327,6 +376,10 @@ extension GameViewController {
     
     @objc func didClickControlButton() {
         self.presentViewControllerAsModalWindow(ControlViewController())
+    }
+    
+    @objc func didClickGameButton(button: NSButton) {
+        self.startGame(gameType: button.tag)
     }
 
 }

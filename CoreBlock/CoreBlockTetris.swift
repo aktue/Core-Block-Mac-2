@@ -209,7 +209,8 @@ class CoreBlockData {
     
     /*
      -1: Replay
-     0 : Sprint
+     0 : Sprint 40
+     1 : Sprint 1000
      3 : Dig race
      */
     static var gameType = 0
@@ -320,7 +321,11 @@ class CoreBlockController {
             CoreBlockData.gameType = gt
         }
         
-        CoreBlockData.lineLimit = 40
+        if gt == 0 {
+            CoreBlockData.lineLimit = 40
+        } else if gt == 1 {
+            CoreBlockData.lineLimit = 1000
+        }
         
         //Reset
         CoreBlockData.column = 0

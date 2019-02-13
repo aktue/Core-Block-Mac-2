@@ -22,7 +22,7 @@ extension CoreBlockHold {
         CoreBlockController.draw(
             CoreBlockController.DrawInfo(
                 tetro: CoreBlockData.pieces[self.piece].tetro,
-                cx: CoreBlockData.pieces[self.piece].x - 2,
+                cx: CoreBlockData.pieces[self.piece].x - 3,
                 cy: 2 + CoreBlockData.pieces[self.piece].y,
                 type: CoreBlockController.DrawType.hold
         ))

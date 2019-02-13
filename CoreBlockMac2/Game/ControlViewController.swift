@@ -43,12 +43,12 @@ class ControlViewController: NSViewController {
         GameManager.shared.resetCoreBlockControl()
     }
     
-    override var preferredContentSize: NSSize {
-        set { }
-        get {
-            return NSSize(width: 400, height: GameManager.shared.allControlKeyNameArray().count * 50)
-        }
-    }
+//    override var preferredContentSize: NSSize {
+//        set { }
+//        get {
+//            return NSSize(width: 400, height: GameManager.shared.allControlKeyNameArray().count * 50)
+//        }
+//    }
     
 }
 
@@ -98,8 +98,9 @@ extension ControlViewController {
             self.view.addSubview(backView)
             backView.snp.makeConstraints { (make) in
                 make.top.equalTo(lastView?.snp.bottom ?? 0)
-                make.width.centerX.equalToSuperview()
+                make.left.right.centerX.equalToSuperview()
                 make.height.equalTo(50)
+                make.width.equalTo(400)
 //                make.size.equalTo(NSMakeSize(300, 50))
             }
             
@@ -148,6 +149,9 @@ extension ControlViewController {
                 keyButton.tag = self.baseKeyButtonTag + index
                 keyButton.title = kayName
                 keyButton.titleTextColor = NSColor.cbm_clear
+                keyButton.isBordered = false
+                keyButton.wantsLayer = true
+                keyButton.layer?.backgroundColor = NSColor.cbm_gray_500.cgColor
                 keyButton.alphaValue = 0
                 keyButton.target = self
                 keyButton.action = #selector(ControlViewController.didClickKeyButton)
@@ -159,6 +163,10 @@ extension ControlViewController {
             
             lastView = backView
         }
+        
+        lastView?.snp.makeConstraints({ (make) in
+            make.bottom.equalToSuperview()
+        })
     }
 }
 
@@ -170,7 +178,7 @@ extension ControlViewController {
         
         self.currentKeyButton?.alphaValue = 0
         self.currentKeyButton = button
-        self.currentKeyButton.alphaValue = 0.4
+        self.currentKeyButton.alphaValue = 0.2
     }
     
     func pressKey(down: Bool, event: NSEvent) {
