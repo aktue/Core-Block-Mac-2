@@ -14,6 +14,11 @@ class GameManager {
     
     static var shared: GameManager = GameManager()
     
+    /// don't change value until restart app
+    var windowWidth: CGFloat = 0
+    var windowHeight: CGFloat = 0
+    var minoSize: Int = 0
+    
     var settingString: String {
         get {
             if let value = UserDefaults.standard.value(forKey: "GameManager.settingString") as? String,
@@ -21,20 +26,22 @@ class GameManager {
                 return value
             } else {
                 return """
-                /// TODO: 全写上单位，现在先试一试
+                /// unit: frame
                 DAS: 6
                 ARR: 0
-                /// TODO: 如果有，就固定值，单位G
+                /// unit: G (0.0156 = 1 / 64)
                 Gravity: 0.0156
-                /// TODO: 单位G
                 SoftDrop: 200.0
+                /// unit: frame
                 LockDelay: 30
+                /// 1: on, 0: off
                 Ghost: 1
                 
-                /// 窗口大小
+                /// window size
                 WindowWidth: 800
                 WindowHeight: 600
-                CellSize: 24
+                /// mino size
+                MinoSize: 24
                 """
             }
         }
@@ -76,6 +83,13 @@ class GameManager {
         set {
             UserDefaults.standard.setValue(newValue, forKey: "GameManager.controlString")
         }
+    }
+    
+    init() {
+        
+        self.windowWidth = self.cgFloatValue(forKey: "WindowWidth", defaultValue: 800.0)
+        self.windowHeight = self.cgFloatValue(forKey: "WindowHeight", defaultValue: 600.0)
+        self.minoSize = self.intValue(forKey: "MinoSize", defaultValue: Int(min(self.windowWidth, self.windowHeight) / 25))
     }
 }
 

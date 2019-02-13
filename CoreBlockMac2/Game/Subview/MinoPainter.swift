@@ -47,8 +47,8 @@ class MinoPainter {
             [0xc1c1c1.color, 0xdddddd.color, 0xa6a6a6.color, 0x8b8b8b.color],
         ]
         
-        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
-        let spriteCanvasHeight: Int = cellSize
+        let minoSize: Int = GameManager.shared.minoSize
+        let spriteCanvasHeight: Int = minoSize
         let spriteCanvasWidth: Int = spriteCanvasHeight * 10
         
         let image: NSImage = NSImage(size: NSSize(width: spriteCanvasWidth, height: spriteCanvasHeight))
@@ -56,10 +56,10 @@ class MinoPainter {
         
         for i in (0 ..< 10) {
             
-            let x = i * cellSize
+            let x = i * minoSize
             let color: NSColor = solid[i][0]
             color.set()
-            NSRect(x: x, y: 0, width: cellSize, height: cellSize).fill()
+            NSRect(x: x, y: 0, width: minoSize, height: minoSize).fill()
         }
         
         image.unlockFocus()
@@ -93,10 +93,10 @@ extension MinoPainter {
      */
     func drawCell(x: Int, y: Int, color: Int) {
         
-        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
-        let x = x * cellSize
-        let y = (y - 2) * cellSize
+        let minoSize: Int = GameManager.shared.minoSize
+        let x = x * minoSize
+        let y = (y - 2) * minoSize
         
-        self.minoImage.draw(in: NSRect(x: x, y: y, width: cellSize, height: cellSize), from: NSRect(x: color * cellSize, y: 0, width: cellSize, height: cellSize), operation: NSCompositingOperation.copy, fraction: 1)
+        self.minoImage.draw(in: NSRect(x: x, y: y, width: minoSize, height: minoSize), from: NSRect(x: color * minoSize, y: 0, width: minoSize, height: minoSize), operation: NSCompositingOperation.copy, fraction: 1)
     }
 }

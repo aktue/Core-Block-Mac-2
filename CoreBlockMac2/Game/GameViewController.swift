@@ -62,7 +62,7 @@ class GameViewController: NSViewController {
     override var preferredContentSize: NSSize {
         set { }
         get {
-            return NSSize(width: GameManager.shared.cgFloatValue(forKey: "WindowWidth", defaultValue: 800.0), height: GameManager.shared.cgFloatValue(forKey: "WindowHeight", defaultValue: 600.0))
+            return NSSize(width: GameManager.shared.windowWidth, height: GameManager.shared.windowHeight)
         }
     }
     
@@ -90,15 +90,15 @@ extension GameViewController {
     /// 矩阵（显示已经存在的方块，不包括当前活动的）
     func initBaseMinoView() {
         
-        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
+        let minoSize: Int = GameManager.shared.minoSize
         
         /// 矩阵 背景
         self.stackGridView = StackGridView()
         self.view.addSubview(self.stackGridView)
         self.stackGridView.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
-            make.width.equalTo(cellSize * 10)
-            make.height.equalTo(cellSize * 20)
+            make.width.equalTo(minoSize * 10)
+            make.height.equalTo(minoSize * 20)
         }
         
         /// 矩阵
@@ -112,20 +112,20 @@ extension GameViewController {
     /// hold 和 next
     func initHoldAndNextView() {
         
-        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
+        let minoSize: Int = GameManager.shared.minoSize
         
-        let holdViewWidth: Int = cellSize * 4
-        let holdViewHeight: Int = cellSize * 3
+        let holdViewWidth: Int = minoSize * 4
+        let holdViewHeight: Int = minoSize * 3
         
-        let nextViewWidth: Int = cellSize * 4
-        let nextViewHeight: Int = cellSize * 3 * 5
+        let nextViewWidth: Int = minoSize * 4
+        let nextViewHeight: Int = minoSize * 3 * 5
         
         /// hold
         self.holdView = BaseMinoView()
         self.view.addSubview(self.holdView)
         self.holdView.snp.makeConstraints { (make) in
-            make.top.equalTo(self.stackGridView).offset(cellSize)
-            make.right.equalTo(self.stackGridView.snp.left).offset(-cellSize / 2)
+            make.top.equalTo(self.stackGridView).offset(minoSize)
+            make.right.equalTo(self.stackGridView.snp.left).offset(-minoSize / 2)
             make.width.equalTo(holdViewWidth)
             make.height.equalTo(holdViewHeight)
         }
@@ -134,8 +134,8 @@ extension GameViewController {
         self.nextView = NextView()
         self.view.addSubview(self.nextView)
         self.nextView.snp.makeConstraints { (make) in
-            make.top.equalTo(self.stackGridView).offset(cellSize)
-            make.left.equalTo(self.stackGridView.snp.right).offset(cellSize / 2)
+            make.top.equalTo(self.stackGridView).offset(minoSize)
+            make.left.equalTo(self.stackGridView.snp.right).offset(minoSize / 2)
             make.width.equalTo(nextViewWidth)
             make.height.equalTo(nextViewHeight)
         }
@@ -176,7 +176,7 @@ extension GameViewController {
     /// 状态信息
     func initMessageView() {
         
-        let cellSize: Int = GameManager.shared.intValue(forKey: "CellSize", defaultValue: 24)
+        let minoSize: Int = GameManager.shared.minoSize
         var lastView: NSView!
         
         /// 游戏信息 开始 暂停
@@ -208,7 +208,7 @@ extension GameViewController {
             self.finesseTextField = self.textField(fontSize: 40)
             self.finesseTextField.snp.makeConstraints { (make) in
                 make.centerX.equalTo(lastView)
-                make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
+                make.top.equalTo(lastView.snp.bottom).offset(minoSize / 2)
             }
             
             lastView = self.textField(withTitle: "Finesse", fontSize: 15)
@@ -223,7 +223,7 @@ extension GameViewController {
             self.ppsTextField = self.textField(fontSize: 20)
             self.ppsTextField.snp.makeConstraints { (make) in
                 make.centerX.equalTo(lastView)
-                make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
+                make.top.equalTo(lastView.snp.bottom).offset(minoSize / 2)
             }
             
             lastView = self.textField(withTitle: "PPS", fontSize: 15)
@@ -238,7 +238,7 @@ extension GameViewController {
             self.timeTextField = self.textField(fontSize: 20)
             self.timeTextField.snp.makeConstraints { (make) in
                 make.centerX.equalTo(lastView)
-                make.top.equalTo(lastView.snp.bottom).offset(cellSize / 2)
+                make.top.equalTo(lastView.snp.bottom).offset(minoSize / 2)
             }
             
             lastView = self.textField(withTitle: "", fontSize: 15)
@@ -271,7 +271,7 @@ extension GameViewController {
         }
         
         lastView?.snp.makeConstraints({ (make) in
-            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-cellSize / 2)
+            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-minoSize / 2)
         })
     }
     
@@ -310,7 +310,7 @@ extension GameViewController {
         
         lastView?.snp.makeConstraints({ (make) in
             make.centerX.equalTo(self.nextView)
-            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-cellSize / 2)
+            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-minoSize / 2)
         })
     }
     
