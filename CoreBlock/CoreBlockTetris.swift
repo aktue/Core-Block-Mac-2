@@ -127,13 +127,13 @@ class CoreBlockData {
         [
             [1, 2, 1, 0, 1, 2, 2, 1],
             [2, 2, 3, 2, 1, 2, 3, 3, 2],
-            [2, 3, 2, 1, 2, 3, 3, 2],
+            [3, 4, 3, 2, 3, 4, 4, 3],
             [2, 3, 2, 1, 2, 3, 3, 2, 2],
             ],
         [
             [1, 2, 1, 0, 1, 2, 2, 1],
             [2, 2, 3, 2, 1, 2, 3, 3, 2],
-            [2, 3, 2, 1, 2, 3, 3, 2],
+            [3, 4, 3, 2, 3, 4, 4, 3],
             [2, 3, 2, 1, 2, 3, 3, 2, 2],
             ],
         [
@@ -151,7 +151,7 @@ class CoreBlockData {
         [
             [1, 2, 1, 0, 1, 2, 2, 1],
             [2, 2, 3, 2, 1, 2, 3, 3, 2],
-            [2, 3, 2, 1, 2, 3, 3, 2],
+            [3, 4, 3, 2, 3, 4, 4, 3],
             [2, 3, 2, 1, 2, 3, 3, 2, 2],
             ],
         [
@@ -171,11 +171,15 @@ class CoreBlockData {
     static var settings = (
         DAS: 6,
         ARR: 0,
-        Gravity: 0.0156, /// 1.0 / 64
+        Gravity: 0.0156,
         SoftDrop: 200.0,
         LockDelay: 30,
-        Ghost: 1
+        Ghost: 1,
+        FinesseFaultRepeat: 10
     )
+    
+    /// after finesse fault, this will > 0, place a piece and -1
+    static var finesseFaultRepeat = 0
     
     /// total frames
     static var frame = 0
@@ -238,11 +242,12 @@ class CoreBlockData {
         moveRight: 37,  /// l
         softDrop: 40,   /// k
         hardDrop: 34,   /// i
-        hold: 49,  /// space
-        rotateRight: 3,    /// f
-        rotateLeft: 2,     /// d
-        rotate180: 1,      /// s
-        retry: 15       /// r
+        hold: 49,       /// space
+        rotateRight: 3, /// f
+        rotateLeft: 2,  /// d
+        rotate180: 1,   /// s
+        retry: 15,      /// r
+        stopRepeat: 14  /// e
     )
     
     static var flags = (
@@ -351,11 +356,13 @@ class CoreBlockController {
         CoreBlockData.statsFinesse = 0
         CoreBlockData.lines = 0
         CoreBlockData.piecesSet = 0
+        CoreBlockData.finesseFaultRepeat = 0
         
         CoreBlockController.message(CoreBlockData.statsFinesse, .finesse)
         CoreBlockController.message(CoreBlockData.piecesSet, .statsPiece)
         CoreBlockController.message(CoreBlockData.lineLimit - CoreBlockData.lines, .statsLines)
         statistics()
+        CoreBlockController.message(CoreBlockData.finesseFaultRepeat, CoreBlockController.MessageType.finesseFaultRepeat)
         CoreBlockController.clear(CoreBlockController.DrawType.stack)
         CoreBlockController.clear(CoreBlockController.DrawType.active)
         CoreBlockController.clear(CoreBlockController.DrawType.hold)
@@ -443,6 +450,10 @@ class CoreBlockController {
             }
             if (keyCode == CoreBlockData.binds.retry) {
                 CoreBlockController.shared.new(gameType: CoreBlockData.gameType)
+            }
+            if (keyCode == CoreBlockData.binds.stopRepeat) {
+                CoreBlockData.finesseFaultRepeat = 0
+                CoreBlockController.message(CoreBlockData.finesseFaultRepeat, CoreBlockController.MessageType.finesseFaultRepeat)
             }
             if (!CoreBlockData.watchingReplay) {
                 if (keyCode == CoreBlockData.binds.moveLeft) {
@@ -641,9 +652,9 @@ extension CoreBlockController {
             CoreBlockPiece.shared.dirty = false
         } else if (CoreBlockData.gameState == 2) {
             // Count Down
-            if (CoreBlockData.frame < 50) {
+            if (CoreBlockData.frame < 30) {
                 CoreBlockController.message("READY", .game)
-            } else if (CoreBlockData.frame < 100) {
+            } else if (CoreBlockData.frame < 60) {
                 CoreBlockController.message("GO!", .game)
             } else {
                 CoreBlockController.message("", .game)
@@ -678,7 +689,7 @@ extension CoreBlockController {
 extension CoreBlockController {
     
     enum MessageType {
-        case game, statsPiece, pps, statsLines, statsTime, finesse
+        case game, statsPiece, pps, statsLines, statsTime, finesse, finesseFaultRepeat
     }
     
     static func message(_ message: String, _ type: MessageType) {

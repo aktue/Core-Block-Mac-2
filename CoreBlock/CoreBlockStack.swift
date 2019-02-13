@@ -25,6 +25,34 @@ class CoreBlockStack {
 extension CoreBlockStack {
     
     /**
+     * Check if finesse fault
+     */
+    func hasFinesseFault(_ tetro: [[Int]]) -> Bool {
+        var once = false
+        
+        for x in (0 ..< tetro.count) {
+            for y in (0 ..< tetro[x].count) {
+                if (tetro[x][y] > 0) {
+                    // Get column for finesse
+                    if (!once || x + CoreBlockPiece.shared.x < CoreBlockData.column) {
+                        CoreBlockData.column = x + CoreBlockPiece.shared.x
+                        once = true
+                    }
+                }
+            }
+        }
+        
+        if CoreBlockPiece.shared.finesse > CoreBlockData.finesse[CoreBlockPiece.shared.index][CoreBlockPiece.shared.pos][CoreBlockData.column] {
+            
+            CoreBlockData.statsFinesse += CoreBlockPiece.shared.finesse - CoreBlockData.finesse[CoreBlockPiece.shared.index][CoreBlockPiece.shared.pos][CoreBlockData.column]
+            CoreBlockController.message(CoreBlockData.statsFinesse, .finesse)
+            
+            return true
+        }
+        return false
+    }
+    
+    /**
      * Adds tetro to the stack, and clears lines if they fill up.
      */
     func addPiece(_ tetro: [[Int]]) {
@@ -99,8 +127,6 @@ extension CoreBlockStack {
         }
         
         CoreBlockData.piecesSet += 1 // NOTE Stats
-        // TODO Might not need this (same for in init)
-        CoreBlockData.column = 0
         
         CoreBlockController.message(CoreBlockData.piecesSet, .statsPiece)
         

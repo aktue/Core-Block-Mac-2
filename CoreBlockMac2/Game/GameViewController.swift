@@ -35,6 +35,8 @@ class GameViewController: NSViewController {
     var lineTextField: NSTextField!
     /// finesse
     var finesseTextField: NSTextField!
+    /// finesseFaultRepeat
+    var finesseFaultRepeatTextField: NSTextField!
     /// pps
     var ppsTextField: NSTextField!
     /// time
@@ -218,6 +220,21 @@ extension GameViewController {
             }
         }
         
+        /// finesseFaultRepeat
+        do {
+            self.finesseFaultRepeatTextField = self.textField(fontSize: 20)
+            self.finesseFaultRepeatTextField.snp.makeConstraints { (make) in
+                make.centerX.equalTo(lastView)
+                make.top.equalTo(lastView.snp.bottom).offset(minoSize / 2)
+            }
+            
+            lastView = self.textField(withTitle: "Repeat", fontSize: 15)
+            lastView.snp.makeConstraints { (make) in
+                make.centerX.equalTo(self.finesseFaultRepeatTextField)
+                make.top.equalTo(self.finesseFaultRepeatTextField.snp.bottom).offset(-10)
+            }
+        }
+        
         /// pps
         do {
             self.ppsTextField = self.textField(fontSize: 20)
@@ -271,7 +288,7 @@ extension GameViewController {
         }
         
         lastView?.snp.makeConstraints({ (make) in
-            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-minoSize / 2)
+            make.bottom.equalTo(self.stackGridView.snp.bottom)
         })
     }
     
@@ -310,7 +327,7 @@ extension GameViewController {
         
         lastView?.snp.makeConstraints({ (make) in
             make.centerX.equalTo(self.nextView)
-            make.bottom.equalTo(self.stackGridView.snp.bottom) /// .offset(-minoSize / 2)
+            make.bottom.equalTo(self.stackGridView.snp.bottom)
         })
     }
     
@@ -441,6 +458,8 @@ extension GameViewController: CoreBlockControllerProtocol {
             self.lineTextField.stringValue = message
         case .statsTime:
             self.timeTextField.stringValue = message
+        case .finesseFaultRepeat:
+            self.finesseFaultRepeatTextField.stringValue = message
         default:
             break
         }

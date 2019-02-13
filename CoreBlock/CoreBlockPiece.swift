@@ -312,15 +312,27 @@ extension CoreBlockPiece {
             CoreBlockData.landed = true
             self.y = Double(self.floorY)
             if (self.lockDelay >= CoreBlockData.settings.LockDelay) {
-                CoreBlockStack.shared.addPiece(self.tetro)
-                self.new(CoreBlockPreview.shared.next())
+                
+                /// need repeat after finesse fault
+                if CoreBlockData.settings.FinesseFaultRepeat > 0 {
+                    
+                    if CoreBlockStack.shared.hasFinesseFault(self.tetro) {
+                        CoreBlockData.finesseFaultRepeat = CoreBlockData.settings.FinesseFaultRepeat
+                    }
+                    
+                    CoreBlockController.message(CoreBlockData.finesseFaultRepeat, CoreBlockController.MessageType.finesseFaultRepeat)
+                }
+                
+                if CoreBlockData.finesseFaultRepeat <= 0 {
+                    CoreBlockStack.shared.addPiece(self.tetro)
+                    self.new(CoreBlockPreview.shared.next())
+                    
+                } else {
+                    CoreBlockData.finesseFaultRepeat -= 1
+                    self.new(self.index)
+                }
+                
             } else {
-                // TODO: :? fe7w8lgt
-//                var a = 1 / setting['Lock Delay'][CoreBlockData.settings['Lock Delay']]
-//                activeCtx.globalCompositeOperation = 'source-atop'
-//                activeCtx.fillStyle = 'rgba(0,0,0,' + a + ')'
-//                activeCtx.fillRect(0, 0, activeCanvas.width, activeCanvas.height)
-//                activeCtx.globalCompositeOperation = 'source-over'
                 self.lockDelay += 1
             }
         }

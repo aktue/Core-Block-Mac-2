@@ -36,6 +36,7 @@ class GameManager {
                 LockDelay: 30
                 /// 1: on, 0: off
                 Ghost: 1
+                FinesseFaultRepeat: 10
                 
                 /// window size
                 WindowWidth: 800
@@ -77,6 +78,8 @@ class GameManager {
                 rotate180: 1
                 /// r
                 retry: 15
+                /// e
+                stopRepeat: 14
                 """
             }
         }
@@ -136,23 +139,13 @@ extension GameManager {
     
     func resetCoreBlockSetting() {
         
-        /*
-         var settings = (
-         DAS: 6,
-         ARR: 0,
-         Gravity: 0.0156,
-         SoftDrop: 200.0,
-         LockDelay: 30,
-         Ghost: 1
-         )
-         */
-        
         CoreBlockData.settings.DAS = self.intValue(forKey: "DAS", defaultValue: 6)
         CoreBlockData.settings.ARR = self.intValue(forKey: "ARR", defaultValue: 0)
         CoreBlockData.settings.Gravity = self.doubleValue(forKey: "Gravity", defaultValue: 0.0156)
         CoreBlockData.settings.SoftDrop = self.doubleValue(forKey: "SoftDrop", defaultValue: 200.0)
         CoreBlockData.settings.LockDelay = self.intValue(forKey: "LockDelay", defaultValue: 30)
         CoreBlockData.settings.Ghost = self.intValue(forKey: "Ghost", defaultValue: 1)
+        CoreBlockData.settings.FinesseFaultRepeat = self.intValue(forKey: "FinesseFaultRepeat", defaultValue: 10)
     }
 }
 
@@ -214,21 +207,6 @@ extension GameManager {
     
     func resetCoreBlockControl() {
         
-        /*
-         static var binds = (
-         pause: 12,      /// q
-         moveLeft: 38,   /// j
-         moveRight: 37,  /// l
-         softDrop: 40,   /// k
-         hardDrop: 34,   /// i
-         hold: 49,  /// space
-         rotateRight: 3,    /// f
-         rotateLeft: 2,     /// d
-         rotate180: 1,      /// s
-         retry: 15       /// r
-         )
-         */
-        
         CoreBlockData.binds.pause = self.keyCode(forKey: "pause")
         CoreBlockData.binds.moveLeft = self.keyCode(forKey: "moveLeft")
         CoreBlockData.binds.moveRight = self.keyCode(forKey: "moveRight")
@@ -239,6 +217,7 @@ extension GameManager {
         CoreBlockData.binds.rotateLeft = self.keyCode(forKey: "rotateLeft")
         CoreBlockData.binds.rotate180 = self.keyCode(forKey: "rotate180")
         CoreBlockData.binds.retry = self.keyCode(forKey: "retry")
+        CoreBlockData.binds.stopRepeat = self.keyCode(forKey: "stopRepeat")
     }
     
     func allControlKeyNameArray() -> [String] {
@@ -254,6 +233,7 @@ extension GameManager {
             "rotateLeft",
             "rotate180",
             "retry",
+            "stopRepeat",
         ]
     }
 }
