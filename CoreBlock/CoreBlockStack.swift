@@ -130,6 +130,9 @@ extension CoreBlockStack {
         
         CoreBlockController.message(CoreBlockData.piecesSet, .statsPiece)
         
+        let kpp: Double = CoreBlockData.keyPressCount > 0 ? Double(CoreBlockData.keyPressCount) / Double(CoreBlockData.piecesSet) : 0
+        CoreBlockController.message(String(format: "%.2f", kpp), .kpp)
+        
         if (CoreBlockData.gameType != 3) {
             CoreBlockController.message(CoreBlockData.lineLimit - CoreBlockData.lines, .statsLines)
         } else {

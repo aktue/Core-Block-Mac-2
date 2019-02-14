@@ -18,23 +18,23 @@ class MinoPainter {
     init() {
         let solidColorArray: [NSColor] = [
             // 0
-            0xc1c1c1.color,
+            0xc1c1c1.cbm_color,
             /// I 0x009bd6
-            0x0f9bd7.color,
+            0x0f9bd7.cbm_color,
             /// J 0x1d3bc4
-            0x2141c6.color,
+            0x2141c6.cbm_color,
             /// L 0xe55711
-            0xe35b02.color,
+            0xe35b02.cbm_color,
             /// O 0xe59f18
-            0xe39f02.color,
+            0xe39f02.cbm_color,
             /// S 0x56b414
-            0x59b101.color,
+            0x59b101.cbm_color,
             /// T 0xb11b89
-            0xaf298a.color,
+            0xaf298a.cbm_color,
             /// Z 0xd90039
-            0xd70f37.color,
-            0x898989.color,
-            0xc1c1c1.color,
+            0xd70f37.cbm_color,
+            0x898989.cbm_color,
+            0xc1c1c1.cbm_color,
         ]
         
         let minoSize: Int = GameSetting.shared.minoSize

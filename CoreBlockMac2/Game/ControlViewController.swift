@@ -8,15 +8,13 @@
 
 import Cocoa
 
-class ControlViewController: NSViewController {
+class ControlViewController: BaseViewController {
     
     // MARK: - property
     
     //// view
     
-    /// 按键检测 最上层 view
-    var keyView: KeyView!
-    /// change style in setting
+    /// change button color after click
     var currentKeyButton: NSButton!
     
     
@@ -35,6 +33,7 @@ class ControlViewController: NSViewController {
         // Do view setup here.
         
         self.initView()
+        self.addKeyEventMonitor()
     }
     
     override func viewWillDisappear() {
@@ -43,12 +42,19 @@ class ControlViewController: NSViewController {
         GameSetting.shared.resetCoreBlockControl()
     }
     
-//    override var preferredContentSize: NSSize {
-//        set { }
-//        get {
-//            return NSSize(width: 400, height: GameSetting.shared.allControlKeyNameArray().count * 50)
-//        }
-//    }
+    override func pressKey(down: Bool, event: NSEvent) {
+        
+        if down, let button = self.currentKeyButton {
+            
+            GameSetting.shared.setKeyCode(Int(event.keyCode), forKey: button.title)
+            button.alphaValue = 0
+            self.currentKeyButton = nil
+            
+            if let textField: NSTextField = self.view.viewWithTag(button.tag - self.baseKeyButtonTag + self.baseKeyCodeTextFieldTag) as? NSTextField {
+                textField.stringValue = String(event.keyCode)
+            }
+        }
+    }
     
 }
 
@@ -65,21 +71,7 @@ extension ControlViewController {
         self.view.layer?.backgroundColor = NSColor.cbm_gray_125.cgColor
         self.view.needsDisplay = true
         
-        self.initKeyView()
         self.initGameSettingView()
-    }
-    
-    /// 按键检测 最上层 view
-    func initKeyView() {
-        
-        self.keyView = KeyView(pressKeyHandler: { (down: Bool, event: NSEvent) in
-            self.pressKey(down: down, event: event)
-        })
-        self.view.addSubview(self.keyView)
-        self.keyView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
-        self.keyView.becomeFirstResponder()
     }
     
     func initGameSettingView() {
@@ -87,25 +79,12 @@ extension ControlViewController {
         var lastView: NSView!
         
         /// introduction
-        do {
-            let textField: NSTextField = NSTextField()
-            textField.stringValue = "Click items below, then press a key to bind them."
-            textField.font = NSFont.init(name: "Menlo", size: 20)
-            textField.alignment = NSTextAlignment.center
-            textField.maximumNumberOfLines = 9
-            textField.textColor = NSColor.cbm_black_500
-            textField.backgroundColor = NSColor.cbm_gray_125
-            textField.isBordered = false
-            textField.isEditable = false
-            textField.isSelectable = false
-            self.view.addSubview(textField)
-            textField.snp.makeConstraints { (make) in
+        lastView = self.view
+            .cbm_addTextField(withTitle: "Click items below, then press a key to bind them.", textColor: NSColor.cbm_black_500, fontSize: 20, maximumNumberOfLines: 100, backgroundColor: NSColor.cbm_gray_125)
+            .cbm_snpMakeConstraints { (make) in
                 make.top.equalTo(lastView?.snp.bottom ?? 5)
                 make.left.right.equalToSuperview()
                 make.width.equalTo(400)
-            }
-            
-            lastView = textField
         }
         
         /// button
@@ -113,56 +92,29 @@ extension ControlViewController {
         
             let kayName: String = GameSetting.shared.allControlKeyNameArray()[index]
             
-            let backView: NSView = NSView()
-            backView.wantsLayer = true
-            backView.layer?.backgroundColor = NSColor.cbm_gray_250.cgColor
-            backView.needsDisplay = true
-            self.view.addSubview(backView)
-            backView.snp.makeConstraints { (make) in
+            let backView: NSView = self.view
+                .cbm_addSubview(withBackgroundColor: NSColor.cbm_gray_250)
+                .cbm_snpMakeConstraints { (make) in
                 make.top.equalTo(lastView?.snp.bottom ?? 0).offset(5)
                 make.left.right.centerX.equalToSuperview()
                 make.height.equalTo(50)
                 make.width.equalTo(400)
-//                make.size.equalTo(NSMakeSize(300, 50))
             }
             
             /// left key name
-            do {
-                let textField: NSTextField = NSTextField()
-                textField.stringValue = kayName
-                textField.font = NSFont.init(name: "Menlo", size: 20)
-                textField.alignment = NSTextAlignment.right
-                textField.textColor = NSColor.cbm_black_500
-                textField.backgroundColor = NSColor.cbm_clear
-                textField.isBordered = false
-                textField.isEditable = false
-                textField.isSelectable = false
-                backView.addSubview(textField)
-                textField.snp.makeConstraints { (make) in
-                    make.left.equalToSuperview()
+            backView
+                .cbm_addTextField(withTitle: kayName, textColor: NSColor.cbm_black_500, fontSize: 20, backgroundColor: NSColor.cbm_clear)
+                .cbm_snpMakeConstraints { (make) in
                     make.centerY.equalToSuperview().offset(-1)
                     make.right.equalTo(backView.snp.centerX).offset(5)
-                }
             }
             
             /// right key code
-            do {
-                let textField: NSTextField = NSTextField()
-                textField.tag = self.baseKeyCodeTextFieldTag + index
-                textField.stringValue = String(GameSetting.shared.keyCode(forKey: kayName))
-                textField.font = NSFont.init(name: "Menlo", size: 20)
-                textField.alignment = NSTextAlignment.left
-                textField.textColor = NSColor.cbm_black_500
-                textField.backgroundColor = NSColor.cbm_clear
-                textField.isBordered = false
-                textField.isEditable = false
-                textField.isSelectable = false
-                backView.addSubview(textField)
-                textField.snp.makeConstraints { (make) in
-                    make.right.equalToSuperview()
+            backView
+                .cbm_addTextField(withTitle: String(GameSetting.shared.keyCode(forKey: kayName)), textColor: NSColor.cbm_black_500, fontSize: 20, backgroundColor: NSColor.cbm_clear, tag: self.baseKeyCodeTextFieldTag + index)
+                .cbm_snpMakeConstraints { (make) in
                     make.centerY.equalToSuperview().offset(-1)
                     make.left.equalTo(backView.snp.centerX).offset(20)
-                }
             }
             
             /// button
@@ -170,7 +122,7 @@ extension ControlViewController {
                 let keyButton = NSButton()
                 keyButton.tag = self.baseKeyButtonTag + index
                 keyButton.title = kayName
-                keyButton.titleTextColor = NSColor.cbm_clear
+                keyButton.cbm_titleTextColor = NSColor.cbm_clear
                 keyButton.isBordered = false
                 keyButton.wantsLayer = true
                 keyButton.layer?.backgroundColor = NSColor.cbm_gray_500.cgColor
@@ -202,37 +154,4 @@ extension ControlViewController {
         self.currentKeyButton = button
         self.currentKeyButton.alphaValue = 0.2
     }
-    
-    func pressKey(down: Bool, event: NSEvent) {
-        
-        if down, let button = self.currentKeyButton {
-            
-            GameSetting.shared.setKeyCode(Int(event.keyCode), forKey: button.title)
-            button.alphaValue = 0
-            self.currentKeyButton = nil
-            
-            if let textField: NSTextField = self.view.viewWithTag(button.tag - self.baseKeyButtonTag + self.baseKeyCodeTextFieldTag) as? NSTextField {
-                textField.stringValue = String(event.keyCode)
-            }
-        }
-    }
-}
-
-extension NSButton {
-    
-    var titleTextColor : NSColor {
-        get {
-            let attrTitle = self.attributedTitle
-            return attrTitle.attribute(NSAttributedString.Key.foregroundColor, at: 0, effectiveRange: nil) as! NSColor
-        }
-        
-        set(newColor) {
-            let attrTitle = NSMutableAttributedString(attributedString: self.attributedTitle)
-            let titleRange = NSMakeRange(0, self.title.count)
-            
-            attrTitle.addAttributes([NSAttributedString.Key.foregroundColor: newColor], range: titleRange)
-            self.attributedTitle = attrTitle
-        }
-    }
-    
 }

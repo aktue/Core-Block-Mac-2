@@ -38,13 +38,6 @@ class SettingViewController: NSViewController {
         GameSetting.shared.resetCoreBlockSetting()
     }
     
-    override var preferredContentSize: NSSize {
-        set { }
-        get {
-            return NSSize(width: 400, height: 600)
-        }
-    }
-    
 }
 
 // MARK: - view
@@ -68,25 +61,12 @@ extension SettingViewController {
         var lastView: NSView!
         
         /// introduction
-        do {
-            let textField: NSTextField = NSTextField()
-            textField.stringValue = "Edit settings below, it save automatically when close window."
-            textField.font = NSFont.init(name: "Menlo", size: 20)
-            textField.alignment = NSTextAlignment.center
-            textField.maximumNumberOfLines = 9
-            textField.textColor = NSColor.cbm_black_500
-            textField.backgroundColor = NSColor.cbm_gray_125
-            textField.isBordered = false
-            textField.isEditable = false
-            textField.isSelectable = false
-            self.view.addSubview(textField)
-            textField.snp.makeConstraints { (make) in
+        lastView = self.view
+            .cbm_addTextField(withTitle: "Edit settings below, it save automatically when close window.", textColor: NSColor.cbm_black_500, fontSize: 20, maximumNumberOfLines: 100, backgroundColor: NSColor.cbm_gray_125)
+            .cbm_snpMakeConstraints { (make) in
                 make.top.equalTo(lastView?.snp.bottom ?? 5)
                 make.left.right.equalToSuperview()
                 make.width.equalTo(400)
-            }
-            
-            lastView = textField
         }
         
         self.gameSettingTextField = NSTextView()
@@ -98,6 +78,7 @@ extension SettingViewController {
         self.gameSettingTextField.snp.makeConstraints { (make) in
             make.top.equalTo(lastView.snp.bottom).offset(5)
             make.left.bottom.right.equalToSuperview()
+            make.height.equalTo(500)
         }
     }
 }

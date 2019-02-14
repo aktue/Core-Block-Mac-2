@@ -41,8 +41,6 @@ class GameSetting {
                 /// window size
                 WindowWidth: 800
                 WindowHeight: 600
-                /// mino size
-                MinoSize: 24
                 """
             }
         }
@@ -51,40 +49,40 @@ class GameSetting {
         }
     }
     
-    var controlString: String {
+    var controlDict: [String: Int] {
         get {
-            if let value = UserDefaults.standard.value(forKey: "GameSetting.controlString") as? String,
+            if let value = UserDefaults.standard.value(forKey: "GameSetting.controlDict") as? [String: Int],
                 !value.isEmpty {
                 return value
             } else {
-                return """
-                /// q
-                pause: 12
-                /// j
-                moveLeft: 38
-                /// l
-                moveRight: 37
-                /// k
-                softDrop: 40
-                /// i
-                hardDrop: 34
-                /// space
-                hold: 49
-                /// f
-                rotateRight: 3
-                /// d
-                rotateLeft: 2
-                /// s
-                rotate180: 1
-                /// r
-                retry: 15
-                /// e
-                stopRepeat: 14
-                """
+                return [
+                    /// q
+                    "pause": 12,
+                    /// j
+                    "moveLeft": 38,
+                    /// l
+                    "moveRight": 37,
+                    /// k
+                    "softDrop": 40,
+                    /// i
+                    "hardDrop": 34,
+                    /// space
+                    "hold": 49,
+                    /// f
+                    "rotateRight": 3,
+                    /// d
+                    "rotateLeft": 2,
+                    /// s
+                    "rotate180": 1,
+                    /// r
+                    "retry": 15,
+                    /// w
+                    "stopRepeat": 13,
+                ]
             }
         }
         set {
-            UserDefaults.standard.setValue(newValue, forKey: "GameSetting.controlString")
+            UserDefaults.standard.setValue(newValue, forKey: "GameSetting.controlDict")
         }
     }
     
@@ -92,7 +90,7 @@ class GameSetting {
         
         self.windowWidth = self.cgFloatValue(forKey: "WindowWidth", defaultValue: 800.0)
         self.windowHeight = self.cgFloatValue(forKey: "WindowHeight", defaultValue: 600.0)
-        self.minoSize = self.intValue(forKey: "MinoSize", defaultValue: Int(min(self.windowWidth, self.windowHeight) / 25))
+        self.minoSize = Int(min(self.windowWidth, self.windowHeight) / 25)
     }
 }
 
@@ -155,54 +153,12 @@ extension GameSetting {
     
     func keyCode(forKey key: String) -> Int {
         
-        /// for each line
-        for lineString: Substring in self.controlString.split(separator: "\n") {
-            
-            /// if not comment
-            if !lineString.hasPrefix("//") {
-                
-                let wordArray: [Substring] = lineString.split(separator: ":")
-                /// get key, value
-                if wordArray.count >= 2,
-                    wordArray[0].lowercased().contains(key.lowercased()) {
-                    
-                    let rawValue: String = String(wordArray[1]).trimmingCharacters(in: [" "])
-                    return Int(rawValue) ?? -1
-                }
-            }
-        }
-        return -1
+        return self.controlDict[key] ?? -1
     }
     
     func setKeyCode(_ keyCode: Int, forKey key: String) {
         
-        var newControlString: String = ""
-        var hasFoundKey: Bool = false
-        
-        /// for each line
-        for lineString: Substring in self.controlString.split(separator: "\n") {
-            
-            /// if not comment
-            if !lineString.hasPrefix("//") {
-                
-                let wordArray: [Substring] = lineString.split(separator: ":")
-                /// get key, value
-                if wordArray.count >= 2,
-                    wordArray[0].lowercased().contains(key.lowercased()) {
-                    
-                    newControlString += wordArray[0] + ": " + String(keyCode) + "\n"
-                    hasFoundKey = true
-                    continue
-                }
-            }
-            newControlString += lineString + "\n"
-        }
-        
-        if !hasFoundKey {
-            newControlString += key + ": " + String(keyCode) + "\n"
-        }
-        
-        self.controlString = newControlString
+        self.controlDict[key] = keyCode
     }
     
     func resetCoreBlockControl() {
@@ -223,15 +179,15 @@ extension GameSetting {
     func allControlKeyNameArray() -> [String] {
         
         return [
-            "pause",
             "moveLeft",
             "moveRight",
             "softDrop",
             "hardDrop",
-            "hold",
             "rotateRight",
             "rotateLeft",
             "rotate180",
+            "hold",
+            "pause",
             "retry",
             "stopRepeat",
         ]

@@ -180,6 +180,7 @@ class CoreBlockData {
     
     /// after finesse fault, this will > 0, place a piece and -1
     static var finesseFaultRepeat = 0
+    static var keyPressCount = 0
     
     /// total frames
     static var frame = 0
@@ -358,9 +359,11 @@ class CoreBlockController {
         CoreBlockData.lines = 0
         CoreBlockData.piecesSet = 0
         CoreBlockData.finesseFaultRepeat = 0
+        CoreBlockData.keyPressCount = 0
         
         CoreBlockController.message(CoreBlockData.statsFinesse, .finesse)
         CoreBlockController.message(CoreBlockData.piecesSet, .statsPiece)
+        CoreBlockController.message(String(format: "%.2f", Double(CoreBlockData.keyPressCount)), .kpp)
         CoreBlockController.message(CoreBlockData.lineLimit - CoreBlockData.lines, .statsLines)
         statistics()
         CoreBlockController.message(CoreBlockData.finesseFaultRepeat, CoreBlockController.MessageType.finesseFaultRepeat)
@@ -437,11 +440,8 @@ class CoreBlockController {
         
         /// key down
         if down {
-            // TODO send to menu or game depending on context.
-//            if ([32, 37, 38, 39, 40].indexOf(keyCode) !== -1) e.preventDefault()
-            //TODO if active, prevent default for binded keys
-            //if (bindsArr.indexOf(keyCode) !== -1)
-            //  e.preventDefault()
+            CoreBlockData.keyPressCount += 1
+            
             if (keyCode == CoreBlockData.binds.pause) {
                 if (CoreBlockData.paused) {
                     unpause()
@@ -695,7 +695,7 @@ extension CoreBlockController {
 extension CoreBlockController {
     
     enum MessageType {
-        case game, statsPiece, pps, statsLines, statsTime, finesse, finesseFaultRepeat
+        case game, statsPiece, pps, kpp, statsLines, statsTime, finesse, finesseFaultRepeat
     }
     
     static func message(_ message: String, _ type: MessageType) {

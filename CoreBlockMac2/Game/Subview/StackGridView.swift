@@ -22,37 +22,35 @@ class StackGridView: NSView {
         let width: CGFloat = self.bounds.size.width
         let height: CGFloat = self.bounds.size.height
         let cellWidth: CGFloat = GameSetting.shared.cgFloatValue(forKey: "MinoSize", defaultValue: 24.0)
-        /// 外部边框 粗线宽度
-        let lineWidth1: CGFloat = 2// cellWidth / 8
-        /// 内部边框 细线宽度
-        let lineWidth2: CGFloat = 1// lineWidth1 / 2
-        /// 内部边框 短细线长度
-        let lineHeight2: CGFloat = cellWidth / 2
         
-        /// 内部 横细线
+        let outerLineWidth: CGFloat = 2 // cellWidth / 8
+        let innerLineWidth: CGFloat = 1 // outerLineWidth / 2
+        let innerShortLineLength: CGFloat = cellWidth / 2
+        
+        /// inner line
         NSColor.cbm_gray_875.set()
         for i in (1 ... 19) {
-            NSRect(x: 0, y: CGFloat(i) * cellWidth, width: width, height: lineWidth2).fill()
+            NSRect(x: 0, y: CGFloat(i) * cellWidth, width: width, height: innerLineWidth).fill()
         }
         for i in (1 ... 9) {
-            NSRect(x: CGFloat(i) * cellWidth, y: 0, width: lineWidth2, height: height).fill()
+            NSRect(x: CGFloat(i) * cellWidth, y: 0, width: innerLineWidth, height: height).fill()
         }
         
-        /// 内部 短细线
+        /// inner short line
         NSColor.cbm_gray_750.set()
         for y in (1 ... 19) {
             for x in (1 ... 9) {
-                NSRect(x: CGFloat(x) * cellWidth - (lineHeight2 / 2), y: CGFloat(y) * cellWidth, width: lineHeight2, height: lineWidth2).fill()
-                NSRect(x: CGFloat(x) * cellWidth, y: CGFloat(y) * cellWidth - (lineHeight2 / 2), width: lineWidth2, height: lineHeight2).fill()
+                NSRect(x: CGFloat(x) * cellWidth - (innerShortLineLength / 2), y: CGFloat(y) * cellWidth, width: innerShortLineLength, height: innerLineWidth).fill()
+                NSRect(x: CGFloat(x) * cellWidth, y: CGFloat(y) * cellWidth - (innerShortLineLength / 2), width: innerLineWidth, height: innerShortLineLength).fill()
             }
         }
         
-        /// 外部 粗线
+        /// outer line
         NSColor.cbm_gray_500.set()
-        NSRect(x: 0, y: 0, width: width, height: lineWidth1).fill()
-        NSRect(x: 0, y: 0, width: lineWidth1, height: height).fill()
-        NSRect(x: width - lineWidth1, y: 0, width: lineWidth1, height: height).fill()
-        NSRect(x: 0, y: height - lineWidth1, width: width, height: lineWidth1).fill()
+        NSRect(x: 0, y: 0, width: width, height: outerLineWidth).fill()
+        NSRect(x: 0, y: 0, width: outerLineWidth, height: height).fill()
+        NSRect(x: width - outerLineWidth, y: 0, width: outerLineWidth, height: height).fill()
+        NSRect(x: 0, y: height - outerLineWidth, width: width, height: outerLineWidth).fill()
     }
     
 }
