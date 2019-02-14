@@ -426,14 +426,20 @@ class CoreBlockController {
      */
     func statistics() {
         
+        CoreBlockController.message(self.statsTimeString(), .statsTime)
+        
+        let time = Date.now() - CoreBlockData.startTime - CoreBlockData.pauseTime
+        let pps: Double = CoreBlockData.piecesSet > 0 ? Double(CoreBlockData.piecesSet) / Double(time) * 1000 : 0
+        CoreBlockController.message(String(format: "%.2f", pps), .pps)
+    }
+    
+    func statsTimeString() -> String {
+        
         let time = Date.now() - CoreBlockData.startTime - CoreBlockData.pauseTime
         let seconds = time / 1000
         let microseconds = (time / 10) % 100
-        CoreBlockController.message((seconds < 10 ? "0" : "") + String(seconds) +
-            (microseconds < 10 ? ":0" : ":") + String(microseconds), .statsTime)
-        
-        let pps: Double = CoreBlockData.piecesSet > 0 ? Double(CoreBlockData.piecesSet) / Double(time) * 1000 : 0
-        CoreBlockController.message(String(format: "%.2f", pps), .pps)
+        return (seconds < 10 ? "0" : "") + String(seconds) +
+            (microseconds < 10 ? ":0" : ":") + String(microseconds)
     }
     
     func pressKey(down: Bool, keyCode: Int) {
@@ -553,7 +559,7 @@ extension CoreBlockController {
     /// start timer
     func startGameLoop() {
         
-        self.timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
+        self.timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive))
         self.timer.schedule(deadline: .now() + self.pageStepTime, repeating: self.pageStepTime)
         self.timer.setEventHandler {
             self.gameLoop()
@@ -611,13 +617,13 @@ extension CoreBlockController {
         if (CoreBlockData.gameType != 3) {
             if (CoreBlockData.lines >= CoreBlockData.lineLimit) {
                 CoreBlockData.gameState = 1
-                CoreBlockController.message("GREAT!", .game)
+                CoreBlockController.message(self.statsTimeString(), .game)
 //                menu(3)
             }
         } else {
             if (CoreBlockData.digLines.count == 0) {
                 CoreBlockData.gameState = 1
-                CoreBlockController.message("GREAT!", .game)
+                CoreBlockController.message(self.statsTimeString(), .game)
 //                menu(3)
             }
         }

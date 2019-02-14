@@ -166,7 +166,8 @@ extension NSView {
         button.title = ""
         
         button.tag = tag
-        button.alphaValue = 0
+        /// show click button effect
+        button.alphaValue = 0.15
         
         button.target = target
         button.action = action
@@ -176,5 +177,48 @@ extension NSView {
             make.edges.equalToSuperview()
         }
         return textField
+    }
+}
+
+
+public class CCGCD {
+    
+    public class main {
+        
+        public static func async(_ handler: @escaping () -> Void) {
+            
+            if Thread.isMainThread {
+                handler()
+            } else {
+                DispatchQueue.main.async(execute: handler)
+            }
+        }
+        
+        public static func sync(_ handler: @escaping () -> Void) {
+            
+            if Thread.isMainThread {
+                handler()
+            } else {
+                DispatchQueue.main.sync(execute: handler)
+            }
+        }
+        
+        public static func after(_ time: Double, _ handler: @escaping () -> Void) {
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: handler)
+        }
+    }
+    
+    public class global {
+        
+        public static func async(_ handler: @escaping () -> Void) {
+            
+            DispatchQueue.global().async(execute: handler)
+        }
+        
+        public static func after(_ time: Double, _ handler: @escaping () -> Void) {
+            
+            DispatchQueue.global().asyncAfter(deadline: .now() + time, execute: handler)
+        }
     }
 }

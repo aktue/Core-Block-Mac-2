@@ -419,25 +419,28 @@ extension GameViewController: CoreBlockControllerProtocol {
     
     func message(_ message: String, _ type: CoreBlockController.MessageType) {
         
-        switch type {
-        case .game:
-            self.gameMessageTextField.stringValue = message
-            self.gameMessageTextField.isHidden = message.isEmpty
-        case .finesse:
-            self.finesseTextField.stringValue = message
-        case .pps:
-            self.ppsTextField.stringValue = message
-        case .kpp:
-            self.kppTextField.stringValue = message
-        case .statsLines:
-            self.lineTextField.stringValue = message
-            self.bigLineTextField.stringValue = message
-        case .statsTime:
-            self.timeTextField.stringValue = message
-        case .finesseFaultRepeat:
-            self.finesseFaultRepeatTextField.stringValue = message
-        default:
-            break
+        DispatchQueue.main.async {
+            
+            switch type {
+            case .game:
+                self.gameMessageTextField.stringValue = message
+                self.gameMessageTextField.isHidden = message.isEmpty
+            case .finesse:
+                self.finesseTextField.stringValue = message
+            case .pps:
+                self.ppsTextField.stringValue = message
+            case .kpp:
+                self.kppTextField.stringValue = message
+            case .statsLines:
+                self.lineTextField.stringValue = message
+                self.bigLineTextField.stringValue = message
+            case .statsTime:
+                self.timeTextField.stringValue = message
+            case .finesseFaultRepeat:
+                self.finesseFaultRepeatTextField.stringValue = message
+            default:
+                break
+            }
         }
     }
     
