@@ -258,7 +258,8 @@ class CoreBlockData {
         hold: 16,
         rotateRight: 32,
         rotateLeft: 64,
-        rotate180: 128
+        rotate180: 128,
+        stopRepeat: 256
     )
 }
 
@@ -451,10 +452,6 @@ class CoreBlockController {
             if (keyCode == CoreBlockData.binds.retry) {
                 CoreBlockController.shared.new(gameType: CoreBlockData.gameType)
             }
-            if (keyCode == CoreBlockData.binds.stopRepeat) {
-                CoreBlockData.finesseFaultRepeat = 0
-                CoreBlockController.message(CoreBlockData.finesseFaultRepeat, CoreBlockController.MessageType.finesseFaultRepeat)
-            }
             if (!CoreBlockData.watchingReplay) {
                 if (keyCode == CoreBlockData.binds.moveLeft) {
                     CoreBlockData.keysDown |= CoreBlockData.flags.moveLeft
@@ -473,6 +470,8 @@ class CoreBlockController {
                     CoreBlockData.keysDown |= CoreBlockData.flags.rotate180
                 } else if (keyCode == CoreBlockData.binds.hold) {
                     CoreBlockData.keysDown |= CoreBlockData.flags.hold
+                } else if (keyCode == CoreBlockData.binds.stopRepeat) {
+                    CoreBlockData.keysDown |= CoreBlockData.flags.stopRepeat
                 }
             }
         }
@@ -495,6 +494,8 @@ class CoreBlockController {
                     CoreBlockData.keysDown ^= CoreBlockData.flags.rotate180
                 } else if (keyCode == CoreBlockData.binds.hold && (CoreBlockData.keysDown & CoreBlockData.flags.hold) > 0) {
                     CoreBlockData.keysDown ^= CoreBlockData.flags.hold
+                } else if (keyCode == CoreBlockData.binds.stopRepeat && (CoreBlockData.keysDown & CoreBlockData.flags.stopRepeat) > 0) {
+                    CoreBlockData.keysDown ^= CoreBlockData.flags.stopRepeat
                 }
             }
         }
@@ -586,6 +587,11 @@ extension CoreBlockController {
         } else if ((CoreBlockData.flags.rotate180 & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.rotate180) > 0)) {
             CoreBlockPiece.shared.rotate(2)
             CoreBlockPiece.shared.finesse += 1
+        }
+        
+        if ((CoreBlockData.flags.stopRepeat & CoreBlockData.keysDown) > 0 && !((CoreBlockData.lastKeys & CoreBlockData.flags.stopRepeat) > 0)) {
+            CoreBlockData.finesseFaultRepeat = 0
+            CoreBlockController.message(CoreBlockData.finesseFaultRepeat, CoreBlockController.MessageType.finesseFaultRepeat)
         }
         
         CoreBlockPiece.shared.checkShift()
