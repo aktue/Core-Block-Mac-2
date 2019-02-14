@@ -1,5 +1,5 @@
 //
-//  GameManager.swift
+//  GameSetting.swift
 //  CoreBlockMac2
 //
 //  Created by Yihua Zhou on 2019/2/11.
@@ -8,11 +8,11 @@
 
 import Cocoa
 
-class GameManager {
+class GameSetting {
     
     // MARK: - property
     
-    static var shared: GameManager = GameManager()
+    static var shared: GameSetting = GameSetting()
     
     /// don't change value until restart app
     var windowWidth: CGFloat = 0
@@ -21,7 +21,7 @@ class GameManager {
     
     var settingString: String {
         get {
-            if let value = UserDefaults.standard.value(forKey: "GameManager.settingString") as? String,
+            if let value = UserDefaults.standard.value(forKey: "GameSetting.settingString") as? String,
                 !value.isEmpty {
                 return value
             } else {
@@ -47,13 +47,13 @@ class GameManager {
             }
         }
         set {
-            UserDefaults.standard.setValue(newValue, forKey: "GameManager.settingString")
+            UserDefaults.standard.setValue(newValue, forKey: "GameSetting.settingString")
         }
     }
     
     var controlString: String {
         get {
-            if let value = UserDefaults.standard.value(forKey: "GameManager.controlString") as? String,
+            if let value = UserDefaults.standard.value(forKey: "GameSetting.controlString") as? String,
                 !value.isEmpty {
                 return value
             } else {
@@ -84,7 +84,7 @@ class GameManager {
             }
         }
         set {
-            UserDefaults.standard.setValue(newValue, forKey: "GameManager.controlString")
+            UserDefaults.standard.setValue(newValue, forKey: "GameSetting.controlString")
         }
     }
     
@@ -98,7 +98,7 @@ class GameManager {
 
 // MARK: - function setting
 
-extension GameManager {
+extension GameSetting {
     
     func intValue(forKey key: String, defaultValue: Int) -> Int {
         
@@ -151,7 +151,7 @@ extension GameManager {
 
 // MARK: - function control
 
-extension GameManager {
+extension GameSetting {
     
     func keyCode(forKey key: String) -> Int {
         

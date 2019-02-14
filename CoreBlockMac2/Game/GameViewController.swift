@@ -56,15 +56,15 @@ class GameViewController: NSViewController {
         self.initView()
         self.initCoreBlockController()
         
-        GameManager.shared.resetCoreBlockSetting()
-        GameManager.shared.resetCoreBlockControl()
+        GameSetting.shared.resetCoreBlockSetting()
+        GameSetting.shared.resetCoreBlockControl()
         self.startGame()
     }
     
     override var preferredContentSize: NSSize {
         set { }
         get {
-            return NSSize(width: GameManager.shared.windowWidth, height: GameManager.shared.windowHeight)
+            return NSSize(width: GameSetting.shared.windowWidth, height: GameSetting.shared.windowHeight)
         }
     }
     
@@ -92,7 +92,7 @@ extension GameViewController {
     /// 矩阵（显示已经存在的方块，不包括当前活动的）
     func initBaseMinoView() {
         
-        let minoSize: Int = GameManager.shared.minoSize
+        let minoSize: Int = GameSetting.shared.minoSize
         
         /// 矩阵 背景
         self.stackGridView = StackGridView()
@@ -114,7 +114,7 @@ extension GameViewController {
     /// hold 和 next
     func initHoldAndNextView() {
         
-        let minoSize: Int = GameManager.shared.minoSize
+        let minoSize: Int = GameSetting.shared.minoSize
         
         let holdViewWidth: Int = minoSize * 4
         let holdViewHeight: Int = minoSize * 3
@@ -178,7 +178,7 @@ extension GameViewController {
     /// 状态信息
     func initMessageView() {
         
-        let minoSize: Int = GameManager.shared.minoSize
+        let minoSize: Int = GameSetting.shared.minoSize
         var lastView: NSView!
         
         /// 游戏信息 开始 暂停
@@ -207,7 +207,7 @@ extension GameViewController {
         
         /// finesse
         do {
-            self.finesseTextField = self.textField(fontSize: 40)
+            self.finesseTextField = self.textField(fontSize: 20)
             self.finesseTextField.snp.makeConstraints { (make) in
                 make.centerX.equalTo(lastView)
                 make.top.equalTo(lastView.snp.bottom).offset(minoSize / 2)

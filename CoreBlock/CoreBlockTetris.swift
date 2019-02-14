@@ -9,15 +9,15 @@
 /*
  README:
  
- how to use this CoreBlock?
+ how to use CoreBlock?
  
- - implement CoreBlockControllerProtocol, to show game view or message.
-   - tetro.y should -2 when you draw it (because the grid size is 10 x 22).
+ 1. implement CoreBlockControllerProtocol, get all game status(tetro.y should -2 when you draw it, because the grid size is 10 x 22)
  
- - set CoreBlockData.settings
- - set CoreBlockData.binds
- - call CoreBlock.shared.new(gameType gt: Int)
- - call CoreBlock.shared.pressKey(down: Bool, keyCode: Int)
+ 2. set CoreBlockData.settings
+ 3. set CoreBlockData.binds
+ 
+ 4. call CoreBlock.shared.new(gameType gt: Int)
+ 5. call CoreBlock.shared.pressKey(down: Bool, keyCode: Int)
  
  var
  

@@ -40,13 +40,13 @@ class ControlViewController: NSViewController {
     override func viewWillDisappear() {
         super.viewWillDisappear()
         
-        GameManager.shared.resetCoreBlockControl()
+        GameSetting.shared.resetCoreBlockControl()
     }
     
 //    override var preferredContentSize: NSSize {
 //        set { }
 //        get {
-//            return NSSize(width: 400, height: GameManager.shared.allControlKeyNameArray().count * 50)
+//            return NSSize(width: 400, height: GameSetting.shared.allControlKeyNameArray().count * 50)
 //        }
 //    }
     
@@ -62,7 +62,7 @@ extension ControlViewController {
         
         /// background color
         self.view.wantsLayer = true
-        self.view.layer?.backgroundColor = NSColor.cbm_gray_250.cgColor
+        self.view.layer?.backgroundColor = NSColor.cbm_gray_125.cgColor
         self.view.needsDisplay = true
         
         self.initKeyView()
@@ -72,7 +72,6 @@ extension ControlViewController {
     /// 按键检测 最上层 view
     func initKeyView() {
         
-        /// 当前活动方块 阴影
         self.keyView = KeyView(pressKeyHandler: { (down: Bool, event: NSEvent) in
             self.pressKey(down: down, event: event)
         })
@@ -87,9 +86,32 @@ extension ControlViewController {
         
         var lastView: NSView!
         
-        for index: Int in (0 ..< GameManager.shared.allControlKeyNameArray().count) {
+        /// introduction
+        do {
+            let textField: NSTextField = NSTextField()
+            textField.stringValue = "Click items below, then press a key to bind them."
+            textField.font = NSFont.init(name: "Menlo", size: 20)
+            textField.alignment = NSTextAlignment.center
+            textField.maximumNumberOfLines = 9
+            textField.textColor = NSColor.cbm_black_500
+            textField.backgroundColor = NSColor.cbm_gray_125
+            textField.isBordered = false
+            textField.isEditable = false
+            textField.isSelectable = false
+            self.view.addSubview(textField)
+            textField.snp.makeConstraints { (make) in
+                make.top.equalTo(lastView?.snp.bottom ?? 5)
+                make.left.right.equalToSuperview()
+                make.width.equalTo(400)
+            }
+            
+            lastView = textField
+        }
         
-            let kayName: String = GameManager.shared.allControlKeyNameArray()[index]
+        /// button
+        for index: Int in (0 ..< GameSetting.shared.allControlKeyNameArray().count) {
+        
+            let kayName: String = GameSetting.shared.allControlKeyNameArray()[index]
             
             let backView: NSView = NSView()
             backView.wantsLayer = true
@@ -97,7 +119,7 @@ extension ControlViewController {
             backView.needsDisplay = true
             self.view.addSubview(backView)
             backView.snp.makeConstraints { (make) in
-                make.top.equalTo(lastView?.snp.bottom ?? 0)
+                make.top.equalTo(lastView?.snp.bottom ?? 0).offset(5)
                 make.left.right.centerX.equalToSuperview()
                 make.height.equalTo(50)
                 make.width.equalTo(400)
@@ -127,7 +149,7 @@ extension ControlViewController {
             do {
                 let textField: NSTextField = NSTextField()
                 textField.tag = self.baseKeyCodeTextFieldTag + index
-                textField.stringValue = String(GameManager.shared.keyCode(forKey: kayName))
+                textField.stringValue = String(GameSetting.shared.keyCode(forKey: kayName))
                 textField.font = NSFont.init(name: "Menlo", size: 20)
                 textField.alignment = NSTextAlignment.left
                 textField.textColor = NSColor.cbm_black_500
@@ -185,7 +207,7 @@ extension ControlViewController {
         
         if down, let button = self.currentKeyButton {
             
-            GameManager.shared.setKeyCode(Int(event.keyCode), forKey: button.title)
+            GameSetting.shared.setKeyCode(Int(event.keyCode), forKey: button.title)
             button.alphaValue = 0
             self.currentKeyButton = nil
             

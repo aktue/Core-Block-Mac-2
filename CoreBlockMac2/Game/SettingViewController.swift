@@ -34,14 +34,14 @@ class SettingViewController: NSViewController {
     override func viewWillDisappear() {
         super.viewWillDisappear()
         
-        GameManager.shared.settingString = self.gameSettingTextField.string
-        GameManager.shared.resetCoreBlockSetting()
+        GameSetting.shared.settingString = self.gameSettingTextField.string
+        GameSetting.shared.resetCoreBlockSetting()
     }
     
     override var preferredContentSize: NSSize {
         set { }
         get {
-            return NSSize(width: 400, height: 500)
+            return NSSize(width: 400, height: 600)
         }
     }
     
@@ -57,7 +57,7 @@ extension SettingViewController {
         
         /// background color
         self.view.wantsLayer = true
-        self.view.layer?.backgroundColor = NSColor.cbm_gray_250.cgColor
+        self.view.layer?.backgroundColor = NSColor.cbm_gray_125.cgColor
         self.view.needsDisplay = true
         
         self.initGameSettingView()
@@ -65,15 +65,39 @@ extension SettingViewController {
     
     func initGameSettingView() {
         
+        var lastView: NSView!
+        
+        /// introduction
+        do {
+            let textField: NSTextField = NSTextField()
+            textField.stringValue = "Edit settings below, it save automatically when close window."
+            textField.font = NSFont.init(name: "Menlo", size: 20)
+            textField.alignment = NSTextAlignment.center
+            textField.maximumNumberOfLines = 9
+            textField.textColor = NSColor.cbm_black_500
+            textField.backgroundColor = NSColor.cbm_gray_125
+            textField.isBordered = false
+            textField.isEditable = false
+            textField.isSelectable = false
+            self.view.addSubview(textField)
+            textField.snp.makeConstraints { (make) in
+                make.top.equalTo(lastView?.snp.bottom ?? 5)
+                make.left.right.equalToSuperview()
+                make.width.equalTo(400)
+            }
+            
+            lastView = textField
+        }
+        
         self.gameSettingTextField = NSTextView()
-        self.gameSettingTextField.string = GameManager.shared.settingString
+        self.gameSettingTextField.string = GameSetting.shared.settingString
         self.gameSettingTextField.font = NSFont.init(name: "Menlo", size: 20)
         self.gameSettingTextField.textColor = NSColor.cbm_gray_875
         self.gameSettingTextField.backgroundColor = NSColor.cbm_gray_250
         self.view.addSubview(self.gameSettingTextField)
         self.gameSettingTextField.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-//            make.edges.equalTo(NSEdgeInsetsMake(50, 50, 50, 50))
+            make.top.equalTo(lastView.snp.bottom).offset(5)
+            make.left.bottom.right.equalToSuperview()
         }
     }
 }

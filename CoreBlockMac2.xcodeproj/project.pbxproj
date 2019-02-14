@@ -13,14 +13,13 @@
 		D72BA128221015F4001CB4A0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D72BA126221015F4001CB4A0 /* MainMenu.xib */; };
 		D72BA13222101EFA001CB4A0 /* CoreBlockPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA13122101EFA001CB4A0 /* CoreBlockPiece.swift */; };
 		D72BA1342210254D001CB4A0 /* CoreBlockTetris.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA1332210254D001CB4A0 /* CoreBlockTetris.swift */; };
-		D72BA13622104E3F001CB4A0 /* CoreBlockMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA13522104E3F001CB4A0 /* CoreBlockMenu.swift */; };
 		D72BA138221055FC001CB4A0 /* CoreBlockHold.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA137221055FC001CB4A0 /* CoreBlockHold.swift */; };
 		D72BA13A2210FD2F001CB4A0 /* CoreBlockStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA1392210FD2F001CB4A0 /* CoreBlockStack.swift */; };
 		D72BA13C221109D4001CB4A0 /* CoreBlockPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA13B221109D4001CB4A0 /* CoreBlockPreview.swift */; };
 		D72BA14122116A5D001CB4A0 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA14022116A5D001CB4A0 /* GameViewController.swift */; };
 		D72BA14422117AA4001CB4A0 /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72BA14322117AA4001CB4A0 /* KeyView.swift */; };
 		D79150472211A3DF008B6620 /* MinoPainter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79150462211A3DF008B6620 /* MinoPainter.swift */; };
-		D791504A2211A78F008B6620 /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79150492211A78F008B6620 /* GameManager.swift */; };
+		D791504A2211A78F008B6620 /* GameSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79150492211A78F008B6620 /* GameSetting.swift */; };
 		D7CC8F5B2212612C00E1CD6C /* StackGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F5A2212612C00E1CD6C /* StackGridView.swift */; };
 		D7CC8F5E2212624900E1CD6C /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F5D2212624900E1CD6C /* Utility.swift */; };
 		D7CC8F6422126AFB00E1CD6C /* NextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC8F6322126AFB00E1CD6C /* NextView.swift */; };
@@ -41,14 +40,13 @@
 		D72BA12A221015F4001CB4A0 /* CoreBlockMac2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CoreBlockMac2.entitlements; sourceTree = "<group>"; };
 		D72BA13122101EFA001CB4A0 /* CoreBlockPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockPiece.swift; sourceTree = "<group>"; };
 		D72BA1332210254D001CB4A0 /* CoreBlockTetris.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockTetris.swift; sourceTree = "<group>"; };
-		D72BA13522104E3F001CB4A0 /* CoreBlockMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockMenu.swift; sourceTree = "<group>"; };
 		D72BA137221055FC001CB4A0 /* CoreBlockHold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockHold.swift; sourceTree = "<group>"; };
 		D72BA1392210FD2F001CB4A0 /* CoreBlockStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockStack.swift; sourceTree = "<group>"; };
 		D72BA13B221109D4001CB4A0 /* CoreBlockPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBlockPreview.swift; sourceTree = "<group>"; };
 		D72BA14022116A5D001CB4A0 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		D72BA14322117AA4001CB4A0 /* KeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		D79150462211A3DF008B6620 /* MinoPainter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinoPainter.swift; sourceTree = "<group>"; };
-		D79150492211A78F008B6620 /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
+		D79150492211A78F008B6620 /* GameSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSetting.swift; sourceTree = "<group>"; };
 		D7CC8F5A2212612C00E1CD6C /* StackGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackGridView.swift; sourceTree = "<group>"; };
 		D7CC8F5D2212624900E1CD6C /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		D7CC8F6322126AFB00E1CD6C /* NextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextView.swift; sourceTree = "<group>"; };
@@ -123,7 +121,6 @@
 			children = (
 				D72BA1332210254D001CB4A0 /* CoreBlockTetris.swift */,
 				D72BA13122101EFA001CB4A0 /* CoreBlockPiece.swift */,
-				D72BA13522104E3F001CB4A0 /* CoreBlockMenu.swift */,
 				D72BA137221055FC001CB4A0 /* CoreBlockHold.swift */,
 				D72BA1392210FD2F001CB4A0 /* CoreBlockStack.swift */,
 				D72BA13B221109D4001CB4A0 /* CoreBlockPreview.swift */,
@@ -135,7 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				D7CC8F5C2212623300E1CD6C /* Utility */,
-				D79150482211A773008B6620 /* Manager */,
+				D79150482211A773008B6620 /* Setting */,
 				D72BA14222117A89001CB4A0 /* Subview */,
 				D72BA14022116A5D001CB4A0 /* GameViewController.swift */,
 				D7CC8F692212C29800E1CD6C /* SettingViewController.swift */,
@@ -156,12 +153,12 @@
 			path = Subview;
 			sourceTree = "<group>";
 		};
-		D79150482211A773008B6620 /* Manager */ = {
+		D79150482211A773008B6620 /* Setting */ = {
 			isa = PBXGroup;
 			children = (
-				D79150492211A78F008B6620 /* GameManager.swift */,
+				D79150492211A78F008B6620 /* GameSetting.swift */,
 			);
-			path = Manager;
+			path = Setting;
 			sourceTree = "<group>";
 		};
 		D7CC8F5C2212623300E1CD6C /* Utility */ = {
@@ -298,9 +295,8 @@
 				D7CC8F5E2212624900E1CD6C /* Utility.swift in Sources */,
 				D79150472211A3DF008B6620 /* MinoPainter.swift in Sources */,
 				D72BA138221055FC001CB4A0 /* CoreBlockHold.swift in Sources */,
-				D791504A2211A78F008B6620 /* GameManager.swift in Sources */,
+				D791504A2211A78F008B6620 /* GameSetting.swift in Sources */,
 				D72BA13222101EFA001CB4A0 /* CoreBlockPiece.swift in Sources */,
-				D72BA13622104E3F001CB4A0 /* CoreBlockMenu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
