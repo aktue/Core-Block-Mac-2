@@ -369,6 +369,7 @@ class CoreBlockController {
         CoreBlockController.message(CoreBlockData.finesseFaultRepeat, CoreBlockController.MessageType.finesseFaultRepeat)
         CoreBlockController.clear(CoreBlockController.DrawType.stack)
         CoreBlockController.clear(CoreBlockController.DrawType.active)
+        CoreBlockController.clear(CoreBlockController.DrawType.ghost)
         CoreBlockController.clear(CoreBlockController.DrawType.hold)
         
         if (CoreBlockData.gameType == 3) {
