@@ -2,6 +2,8 @@
 
 Tetris clone in Mac, a rewrite of [simonlc/tetr.js](https://github.com/simonlc/tetr.js) using Swift, with [finesse](https://tetris.wiki/2_step_finesse) practice function.
 
+[Click here to download latest release](https://github.com/aktue/Core-Block-Mac-2/releases).
+
 [简体中文](README.zh.md)
 
 
