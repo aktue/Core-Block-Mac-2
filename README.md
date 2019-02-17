@@ -11,7 +11,7 @@ Tetris clone in Mac, a rewrite of [simonlc/tetr.js](https://github.com/simonlc/t
 ## Requirements
 
 - Deployment Target
-  - Mac OS X 10.11+
+  - Mac OS X 10.12+
 - Build
   - Xcode 10.0+
   - Swift 4.2+

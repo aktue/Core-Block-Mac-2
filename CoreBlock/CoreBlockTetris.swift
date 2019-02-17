@@ -185,6 +185,10 @@ class CoreBlockData {
     /// total frames
     static var frame = 0
     
+    static let fps = 100
+    static let readyFrame = fps / 2
+    static let goFrame = fps
+    
     /**
      *Pausing variables
      */
@@ -311,8 +315,10 @@ class CoreBlockController {
     
     var delegate: CoreBlockControllerProtocol?
     
-    var timer: DispatchSourceTimer!
-    var pageStepTime: DispatchTimeInterval = .microseconds(1000000 / 60)
+//    var timer: DispatchSourceTimer!
+//    var pageStepTime: DispatchTimeInterval = .microseconds(1000000 / 1000)
+
+    var timebaseInfo = mach_timebase_info_data_t()
     
     /**
      * Resets all the settings and starts the game.
@@ -557,17 +563,70 @@ extension CoreBlockController {
 
 extension CoreBlockController {
     
-    /// start timer
-    func startGameLoop() {
+    private func configureThread() {
         
-        self.timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive))
-        self.timer.schedule(deadline: .now() + self.pageStepTime, repeating: self.pageStepTime)
-        self.timer.setEventHandler {
-            self.gameLoop()
+        mach_timebase_info(&timebaseInfo)
+        let clock2abs = Double(timebaseInfo.denom) / Double(timebaseInfo.numer) * Double(NSEC_PER_SEC)
+        
+        let period      = UInt32(0.00 * clock2abs)
+        let computation = UInt32(0.03 * clock2abs) // 30 ms of work
+        let constraint  = UInt32(0.05 * clock2abs)
+        
+        let THREAD_TIME_CONSTRAINT_POLICY_COUNT = mach_msg_type_number_t(MemoryLayout<thread_time_constraint_policy>.size / MemoryLayout<integer_t>.size)
+        
+        var policy = thread_time_constraint_policy()
+        var ret: Int32
+        let thread: thread_port_t = pthread_mach_thread_np(pthread_self())
+        
+        policy.period = period
+        policy.computation = computation
+        policy.constraint = constraint
+        policy.preemptible = 0
+        
+        ret = withUnsafeMutablePointer(to: &policy) {
+            $0.withMemoryRebound(to: integer_t.self, capacity: Int(THREAD_TIME_CONSTRAINT_POLICY_COUNT)) {
+                thread_policy_set(thread, UInt32(THREAD_TIME_CONSTRAINT_POLICY), $0, THREAD_TIME_CONSTRAINT_POLICY_COUNT)
+            }
         }
-        // 启动定时器
-        self.timer.resume()
+        
+        if ret != KERN_SUCCESS {
+            mach_error("thread_policy_set:", ret)
+            exit(1)
+        }
     }
+    
+    private func nanosToAbs(_ nanos: UInt64) -> UInt64 {
+        return nanos * UInt64(timebaseInfo.denom) / UInt64(timebaseInfo.numer)
+    }
+    
+    /// start timer
+    private func startGameLoop() {
+        
+        Thread.detachNewThread {
+            autoreleasepool {
+                self.configureThread()
+                
+                var when = mach_absolute_time()
+                while true {
+                    when += self.nanosToAbs(NSEC_PER_SEC / UInt64(CoreBlockData.fps))
+                    mach_wait_until(when)
+                    
+                    self.gameLoop()
+                }
+            }
+        }
+    }
+    
+//    func startGameLoop() {
+//
+//        self.timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive))
+//        self.timer.schedule(deadline: .now() + self.pageStepTime, repeating: self.pageStepTime)
+//        self.timer.setEventHandler {
+//            self.gameLoop()
+//        }
+//        // 启动定时器
+//        self.timer.resume()
+//    }
     
     //TODO Cleanup gameloop and update.
     /**
@@ -638,36 +697,48 @@ extension CoreBlockController {
     
     func gameLoop() {
         
-        //TODO check to see how pause works in replays.
-        CoreBlockData.frame += 1
-        
+        // Playing
         if (CoreBlockData.gameState == 0) {
-            // Playing
             
-            if (!CoreBlockData.paused) {
-                update()
+            let repeatCount = Int(Double(Date.now() - CoreBlockData.startTime - CoreBlockData.pauseTime) / 1000.0 * Double(CoreBlockData.fps)) - (CoreBlockData.frame - CoreBlockData.goFrame)
+            
+            if repeatCount > 0 {
+                
+                for _ in (0 ..< repeatCount) {
+                    
+                    //TODO check to see how pause works in replays.
+                    CoreBlockData.frame += 1
+                    
+                    if (!CoreBlockData.paused) {
+                        update()
+                    }
+                    
+                    // TODO improve this with 'dirty' CoreBlockData.flags.
+                    if (
+                        CoreBlockPiece.shared.x != CoreBlockData.lastX ||
+                            CoreBlockPiece.shared.floorY != CoreBlockData.lastY ||
+                            CoreBlockPiece.shared.pos != CoreBlockData.lastPos ||
+                            CoreBlockPiece.shared.dirty
+                        ) {
+                        CoreBlockController.clear(CoreBlockController.DrawType.active)
+                        CoreBlockPiece.shared.drawGhost()
+                        CoreBlockPiece.shared.draw()
+                    }
+                    CoreBlockData.lastX = CoreBlockPiece.shared.x
+                    CoreBlockData.lastY = CoreBlockPiece.shared.floorY
+                    CoreBlockData.lastPos = CoreBlockPiece.shared.pos
+                    CoreBlockPiece.shared.dirty = false
+                }
             }
             
-            // TODO improve this with 'dirty' CoreBlockData.flags.
-            if (
-                CoreBlockPiece.shared.x != CoreBlockData.lastX ||
-                    CoreBlockPiece.shared.floorY != CoreBlockData.lastY ||
-                    CoreBlockPiece.shared.pos != CoreBlockData.lastPos ||
-                    CoreBlockPiece.shared.dirty
-                ) {
-                CoreBlockController.clear(CoreBlockController.DrawType.active)
-                CoreBlockPiece.shared.drawGhost()
-                CoreBlockPiece.shared.draw()
-            }
-            CoreBlockData.lastX = CoreBlockPiece.shared.x
-            CoreBlockData.lastY = CoreBlockPiece.shared.floorY
-            CoreBlockData.lastPos = CoreBlockPiece.shared.pos
-            CoreBlockPiece.shared.dirty = false
         } else if (CoreBlockData.gameState == 2) {
+            
+            CoreBlockData.frame += 1
+            
             // Count Down
-            if (CoreBlockData.frame < 30) {
+            if (CoreBlockData.frame < CoreBlockData.readyFrame) {
                 CoreBlockController.message("READY", .game)
-            } else if (CoreBlockData.frame < 60) {
+            } else if (CoreBlockData.frame < CoreBlockData.goFrame) {
                 CoreBlockController.message("GO!", .game)
             } else {
                 CoreBlockController.message("", .game)
@@ -692,6 +763,8 @@ extension CoreBlockController {
                 CoreBlockPiece.shared.shiftReleased = false
                 CoreBlockPiece.shared.shiftDir = 1
             }
+        } else {
+            CoreBlockData.frame += 1
         }
     }
 }

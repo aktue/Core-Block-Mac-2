@@ -26,12 +26,13 @@ class GameSetting {
                 return value
             } else {
                 return """
+                /// fps: 100
                 /// unit: frame
-                DAS: 6
+                DAS: 9
                 ARR: 0
-                /// unit: G (0.0156 = 1 / 64)
-                Gravity: 0.0156
-                SoftDrop: 200.0
+                /// unit: cell / frame
+                Gravity: 0.01
+                SoftDrop: 100.0
                 /// unit: frame
                 LockDelay: 30
                 /// 1: on, 0: off
