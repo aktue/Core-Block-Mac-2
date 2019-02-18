@@ -34,7 +34,7 @@ class GameSetting {
                 Gravity: 0.01
                 SoftDrop: 100.0
                 /// unit: frame
-                LockDelay: 30
+                LockDelay: 50
                 /// 1: on, 0: off
                 Ghost: 1
                 FinesseFaultRepeat: 10

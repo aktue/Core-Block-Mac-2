@@ -169,11 +169,11 @@ class CoreBlockData {
     static var gravity: Double = 1.0 / 64
     
     static var settings = (
-        DAS: 6,
+        DAS: 9,
         ARR: 0,
-        Gravity: 0.0156,
+        Gravity: 0.01,
         SoftDrop: 200.0,
-        LockDelay: 30,
+        LockDelay: 50,
         Ghost: 1,
         FinesseFaultRepeat: 10
     )
