@@ -20,6 +20,7 @@ class BaseMinoView: NSView {
         self.drawInfo = drawInfo
         DispatchQueue.main.async {
             self.needsDisplay = true
+            self.layer?.display()
         }
     }
     

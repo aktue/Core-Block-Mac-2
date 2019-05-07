@@ -20,6 +20,7 @@ class NextView: NSView {
         self.drawInfoArray = drawInfoArray
         DispatchQueue.main.async {
             self.needsDisplay = true
+            self.layer?.display()
         }
     }
     
