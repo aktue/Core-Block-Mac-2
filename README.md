@@ -4,8 +4,6 @@ Tetris clone in Mac, a rewrite of [simonlc/tetr.js](https://github.com/simonlc/t
 
 [Click here to download latest release](https://github.com/aktue/Core-Block-Mac-2/releases).
 
-[简体中文](README.zh.md)
-
 
 
 ## Requirements
