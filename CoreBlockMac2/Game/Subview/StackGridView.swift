@@ -21,7 +21,7 @@ class StackGridView: NSView {
         
         let width: CGFloat = self.bounds.size.width
         let height: CGFloat = self.bounds.size.height
-        let cellWidth: CGFloat = GameSetting.shared.cgFloatValue(forKey: "MinoSize", defaultValue: 24.0)
+        let cellWidth: CGFloat = CGFloat(GameSetting.shared.minoSize)
         
         let outerLineWidth: CGFloat = 2 // cellWidth / 8
         let innerLineWidth: CGFloat = 1 // outerLineWidth / 2
