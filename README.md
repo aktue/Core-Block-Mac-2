@@ -1,8 +1,10 @@
 # Core Block Mac 2
 
-Tetris clone in Mac, a rewrite of [simonlc/tetr.js](https://github.com/simonlc/tetr.js) using Swift, with [finesse](https://tetris.wiki/2_step_finesse) practice function.
+Tetris clone in Mac, a rewrite of [simonlc/tetr.js](https://github.com/simonlc/tetr.js) using Swift, added [finesse](https://tetris.wiki/2_step_finesse) practice feature. I mainly use it to learn finesse.
 
-[Click here to download latest release](https://github.com/aktue/Core-Block-Mac-2/releases).
+[Click here to download release](https://github.com/aktue/Core-Block-Mac-2/releases).
+
+![demo](Resource/demo_1.gif)
 
 
 
@@ -18,7 +20,7 @@ Tetris clone in Mac, a rewrite of [simonlc/tetr.js](https://github.com/simonlc/t
 
 ## Features
 
-- Finesse practice function
+- Finesse practice
 - Tetris Guideline compliant (random bag, SRS, hold...)
 
 - DAS, ARR settings
@@ -46,11 +48,13 @@ Tetris clone in Mac, a rewrite of [simonlc/tetr.js](https://github.com/simonlc/t
 
 ### How to Practice Finesse
 
-Edit the number of "Settings -> FinesseFaultRepeat". If greater than 0, after a finesse fault the current piece will go back to top. You should place it with finesse again and again until it reaches your specified number.
+After finesse fault, current piece will go back to top. You need to place it with correct finesse repeatedly until it reaches the times specified.
 
-And you can stop the loop manually by "Stop Repeat" key.
+Change "Repeat Times" in "Settings -> FinesseFaultRepeat", set zero to turn off.
 
-![demo](Images/demo.gif)
+You can stop it manually by press "Stop Repeat" key.
+
+![demo](Resource/demo_2.gif)
 
 
 
