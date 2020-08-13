@@ -46,15 +46,28 @@ class GameViewController: BaseViewController {
         // Do view setup here.
         
         self.initView()
-        self.addKeyEventMonitor()
         
         self.initCoreBlockController()
         self.startGame()
     }
     
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        
+        self.addKeyEventMonitor()
+    }
+    
+    override func viewWillDisappear() {
+        super.viewWillDisappear()
+        
+        self.removeKeyEventMonitor()
+    }
+    
     override func pressKey(down: Bool, event: NSEvent) {
         
-        CoreBlockController.shared.pressKey(down: down, keyCode: Int(event.keyCode))
+        if self.hasFocus() {
+            CoreBlockController.shared.pressKey(down: down, keyCode: Int(event.keyCode))
+        }
     }
     
 }
@@ -312,7 +325,7 @@ extension GameViewController {
         do {
             let settingItemArray: [(title: String, action: Selector)] = [
                 (title: "Settings", action: #selector(GameViewController.didClickSettingButton)),
-                (title: "Controlls", action: #selector(GameViewController.didClickControlButton)),
+                (title: "Controls", action: #selector(GameViewController.didClickControlButton)),
                 ]
             
             for item: (title: String, action: Selector) in settingItemArray {

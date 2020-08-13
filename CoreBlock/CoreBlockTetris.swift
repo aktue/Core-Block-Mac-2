@@ -9,17 +9,32 @@
 /*
  README:
  
- how to use CoreBlock?
+ ====================================================
  
- 1. implement CoreBlockControllerProtocol, get all game status(tetro.y should -2 when you draw it, because the grid size is 10 x 22)
+ This is a rewrite of simonlc/tetr.js[https://github.com/simonlc/tetr.js].
+ The main structure hasn't changed a lot, some code may look strange in Swift :P
  
- 2. set CoreBlockData.settings
- 3. set CoreBlockData.binds
+ ====================================================
  
- 4. call CoreBlock.shared.new(gameType gt: Int)
- 5. call CoreBlock.shared.pressKey(down: Bool, keyCode: Int)
+ These are core logic of the game:
  
- var
+ CoreBlockTetris.swift - game loop, state, controller...
+ CoreBlockPiece.swift - piece, move...
+ CoreBlockHold.swift - hold
+ CoreBlockStack.swift - play field
+ CoreBlockPreview.swift - preview
+ 
+ ====================================================
+ 
+ How to use CoreBlock?
+ 
+ 1. Implement CoreBlockControllerProtocol to get all game status (tetro.y should -2 when you draw it, because the grid size is 10 x 22).
+ 
+ 2. Set CoreBlockData.settings.
+ 3. Set CoreBlockData.binds.
+ 
+ 4. Call CoreBlock.shared.new(gameType gt: Int).
+ 5. Call CoreBlock.shared.pressKey(down: Bool, keyCode: Int).
  
  */
 
@@ -297,7 +312,7 @@ extension Double {
 
 // MARK: - game controller
 
-protocol CoreBlockControllerProtocol {
+protocol CoreBlockControllerProtocol: class {
     
     /// common
     func draw(_ drawInfo: CoreBlockController.DrawInfo)
@@ -313,7 +328,7 @@ class CoreBlockController {
     
     static var shared: CoreBlockController = CoreBlockController()
     
-    var delegate: CoreBlockControllerProtocol?
+    weak var delegate: CoreBlockControllerProtocol?
     
 //    var timer: DispatchSourceTimer!
 //    var pageStepTime: DispatchTimeInterval = .microseconds(1000000 / 1000)
@@ -624,7 +639,7 @@ extension CoreBlockController {
 //        self.timer.setEventHandler {
 //            self.gameLoop()
 //        }
-//        // 启动定时器
+//        // Start timer
 //        self.timer.resume()
 //    }
     

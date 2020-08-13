@@ -62,7 +62,7 @@ extension SettingViewController {
         
         /// introduction
         lastView = self.view
-            .cbm_addTextField(withTitle: "Edit settings below, it save automatically when close window.", textColor: NSColor.cbm_black_500, fontSize: 20, maximumNumberOfLines: 100, backgroundColor: NSColor.cbm_gray_125)
+            .cbm_addTextField(withTitle: "Edit settings below", textColor: NSColor.cbm_black_500, fontSize: 20, maximumNumberOfLines: 100, backgroundColor: NSColor.cbm_gray_125)
             .cbm_snpMakeConstraints { (make) in
                 make.top.equalTo(lastView?.snp.bottom ?? 5)
                 make.left.right.equalToSuperview()

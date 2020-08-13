@@ -9,6 +9,14 @@
 import Cocoa
 
 class BaseViewController: NSViewController {
+    
+    // MARK: - property
+    
+    var eventMonitorFlagsChanged: Any?
+    var eventMonitorKeyDown: Any?
+    var eventMonitorKeyUp: Any?
+    
+    // MARK: - life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,19 +33,37 @@ extension BaseViewController {
     
     func addKeyEventMonitor() {
         
-        NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask.flagsChanged) { (event) -> NSEvent? in
+        self.eventMonitorFlagsChanged = NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask.flagsChanged) { (event) -> NSEvent? in
             self.pressKey(down: (event.modifierFlags.rawValue != 0x10100), event: event)
             return event
         }
         
-        NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask.keyDown) { (event) -> NSEvent? in
+        self.eventMonitorKeyDown = NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask.keyDown) { (event) -> NSEvent? in
             self.pressKey(down: true, event: event)
             return event
         }
         
-        NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask.keyUp) { (event) -> NSEvent? in
+        self.eventMonitorKeyUp = NSEvent.addLocalMonitorForEvents(matching: NSEvent.EventTypeMask.keyUp) { (event) -> NSEvent? in
             self.pressKey(down: false, event: event)
             return event
         }
+    }
+    
+    func removeKeyEventMonitor() {
+        
+        for eventMonitor in [
+            self.eventMonitorFlagsChanged,
+            self.eventMonitorKeyDown,
+            self.eventMonitorKeyUp
+            ] {
+            
+            if let eventMonitor = eventMonitor {
+                NSEvent.removeMonitor(eventMonitor)
+            }
+        }
+    }
+    
+    func hasFocus() -> Bool {
+        return self.view.window?.isKeyWindow ?? false
     }
 }

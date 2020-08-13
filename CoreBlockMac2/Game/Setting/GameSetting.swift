@@ -14,32 +14,37 @@ class GameSetting {
     
     static var shared: GameSetting = GameSetting()
     
-    /// don't change value until restart app
+    /// doesn't change value until restart app
     var windowWidth: CGFloat = 0
     var windowHeight: CGFloat = 0
     var minoSize: Int = 0
     
     var settingString: String {
+        
         get {
-            if let value = UserDefaults.standard.value(forKey: "GameSetting.settingString") as? String,
+            if let value: String = UserDefaults.standard.value(forKey: "GameSetting.settingString") as? String,
                 !value.isEmpty {
+                
                 return value
+                
             } else {
+                
                 return """
-                /// fps: 100
-                /// unit: frame
-                DAS: 9
-                ARR: 0
-                /// unit: cell / frame
-                Gravity: 0.01
-                SoftDrop: 100.0
-                /// unit: frame
-                LockDelay: 50
-                /// 1: on, 0: off
-                Ghost: 1
+                
+                // fps: 100
+                
+                DAS: 9 // frame
+                ARR: 0 // frame
+                
+                Gravity: 0.01 // cell/frame
+                SoftDrop: 100.0 // cell/frame
+                
+                LockDelay: 50 // frame
+                
+                Ghost: 1 // 1: on, 0: off
                 FinesseFaultRepeat: 10
                 
-                /// window size
+                // window size
                 WindowWidth: 800
                 WindowHeight: 600
                 """
@@ -51,11 +56,15 @@ class GameSetting {
     }
     
     var controlDict: [String: Int] {
+        
         get {
-            if let value = UserDefaults.standard.value(forKey: "GameSetting.controlDict") as? [String: Int],
+            if let value: [String: Int] = UserDefaults.standard.value(forKey: "GameSetting.controlDict") as? [String: Int],
                 !value.isEmpty {
+                
                 return value
+                
             } else {
+                
                 return [
                     /// q
                     "pause": 12,
@@ -120,10 +129,15 @@ extension GameSetting {
     func rawValue(forKey key: String) -> String {
         
         /// for each line
-        for lineString: Substring in self.settingString.split(separator: "\n") {
+        for var lineString: Substring in self.settingString.split(separator: "\n") {
             
-            /// if not comment
-            if !lineString.hasPrefix("//") {
+            /// remove comment
+            if let index: String.Index = (lineString.range(of: "//")?.lowerBound) {
+                
+                lineString = lineString.prefix(upTo: index)
+            }
+            
+            if !lineString.isEmpty {
                 
                 let wordArray: [Substring] = lineString.split(separator: ":")
                 /// get key, value
@@ -184,8 +198,8 @@ extension GameSetting {
             "moveRight",
             "softDrop",
             "hardDrop",
-            "rotateRight",
             "rotateLeft",
+            "rotateRight",
             "rotate180",
             "hold",
             "pause",
