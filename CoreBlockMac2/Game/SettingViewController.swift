@@ -58,26 +58,15 @@ extension SettingViewController {
     
     func initGameSettingView() {
         
-        var lastView: NSView!
-        
-        /// introduction
-        lastView = self.view
-            .cbm_addTextField(withTitle: "Edit settings below", textColor: NSColor.cbm_black_500, fontSize: 20, maximumNumberOfLines: 100, backgroundColor: NSColor.cbm_gray_125)
-            .cbm_snpMakeConstraints { (make) in
-                make.top.equalTo(lastView?.snp.bottom ?? 5)
-                make.left.right.equalToSuperview()
-                make.width.equalTo(400)
-        }
-        
         self.gameSettingTextField = NSTextView()
         self.gameSettingTextField.string = GameSetting.shared.settingString
         self.gameSettingTextField.font = NSFont.init(name: "Menlo", size: 20)
         self.gameSettingTextField.textColor = NSColor.cbm_gray_875
-        self.gameSettingTextField.backgroundColor = NSColor.cbm_gray_250
+        self.gameSettingTextField.backgroundColor = NSColor.cbm_gray_125
         self.view.addSubview(self.gameSettingTextField)
         self.gameSettingTextField.snp.makeConstraints { (make) in
-            make.top.equalTo(lastView.snp.bottom).offset(5)
-            make.left.bottom.right.equalToSuperview()
+            make.edges.equalToSuperview()
+            make.width.equalTo(400)
             make.height.equalTo(500)
         }
     }

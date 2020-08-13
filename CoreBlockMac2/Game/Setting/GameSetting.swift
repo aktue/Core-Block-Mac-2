@@ -31,7 +31,8 @@ class GameSetting {
                 
                 return """
                 
-                // fps: 100
+                // Edit settings below
+                // FPS: 100
                 
                 DAS: 9 // frame
                 ARR: 0 // frame
