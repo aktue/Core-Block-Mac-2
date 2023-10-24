@@ -222,3 +222,34 @@ public class CCGCD {
         }
     }
 }
+
+extension NSImage {
+    
+    /// Rotates the image by the specified degrees around the center.
+    /// Note that if the angle is not a multiple of 90°, parts of the rotated image may be drawn outside the image bounds.
+    func rotated(by angle: CGFloat) -> NSImage {
+        let img = NSImage(size: self.size, flipped: false, drawingHandler: { (rect) -> Bool in
+            let (width, height) = (rect.size.width, rect.size.height)
+            let transform = NSAffineTransform()
+            transform.translateX(by: width / 2, yBy: height / 2)
+            transform.rotate(byDegrees: angle)
+            transform.translateX(by: -width / 2, yBy: -height / 2)
+            transform.concat()
+            self.draw(in: rect)
+            return true
+        })
+        img.isTemplate = self.isTemplate // preserve the underlying image's template setting
+        return img
+    }
+    
+    func dimmed(alpha: CGFloat) -> NSImage {
+        let newImage = NSImage(size: self.size)
+        newImage.lockFocus()
+
+        let imageRect = NSRect(origin: .zero, size: self.size)
+        self.draw(in: imageRect, from: imageRect, operation: .sourceOver, fraction: alpha)
+
+        newImage.unlockFocus()
+        return newImage
+    }
+}

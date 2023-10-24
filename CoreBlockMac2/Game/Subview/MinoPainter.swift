@@ -14,6 +14,7 @@ class MinoPainter {
     static var shared: MinoPainter = MinoPainter()
     
     var minoImage: NSImage!
+    var ghostMinoImage: NSImage!
     
     init() {
         let solidColorArray: [NSColor] = [
@@ -41,19 +42,59 @@ class MinoPainter {
         let spriteCanvasHeight: Int = minoSize
         let spriteCanvasWidth: Int = spriteCanvasHeight * solidColorArray.count
         
-        let image: NSImage = NSImage(size: NSSize(width: spriteCanvasWidth, height: spriteCanvasHeight))
-        image.lockFocus()
-        
-        for i in (0 ..< solidColorArray.count) {
+        // init default mino images
+        do {
+            let image: NSImage = NSImage(size: NSSize(width: spriteCanvasWidth, height: spriteCanvasHeight))
+            image.lockFocus()
             
-            let x = i * minoSize
-            let color: NSColor = solidColorArray[i]
-            color.set()
-            NSRect(x: x, y: 0, width: minoSize, height: minoSize).fill()
+            // draw pure color
+            for i in (0 ..< solidColorArray.count) {
+                
+                let x = i * minoSize
+                let color: NSColor = solidColorArray[i]
+                color.set()
+                NSRect(x: x, y: 0, width: minoSize, height: minoSize).fill()
+            }
+            
+            // load local skin image if exist
+            for i in (0 ..< solidColorArray.count) {
+                
+                let x = i * minoSize
+                if let image = NSImage(named: "mino_" + "\(i)") {
+                    image.rotated(by: 90).draw(in: NSRect(x: x, y: 0, width: minoSize, height: minoSize), from: NSRect(x: 0, y: 0, width: image.size.width, height: image.size.height), operation: NSCompositingOperation.copy, fraction: 1)
+                }
+            }
+            
+            image.unlockFocus()
+            self.minoImage = image
         }
         
-        image.unlockFocus()
-        self.minoImage = image
+        // init ghost mino images
+        do {
+            let image: NSImage = NSImage(size: NSSize(width: spriteCanvasWidth, height: spriteCanvasHeight))
+            image.lockFocus()
+            
+            // draw pure color
+            for i in (0 ..< solidColorArray.count) {
+                
+                let x = i * minoSize
+                let color: NSColor = solidColorArray[i]
+                color.set()
+                NSRect(x: x, y: 0, width: minoSize, height: minoSize).fill()
+            }
+            
+            // load local skin image if exist
+            for i in (0 ..< solidColorArray.count) {
+                
+                let x = i * minoSize
+                if let image = NSImage(named: "mino_" + "\(i)") {
+                    image.rotated(by: 90).dimmed(alpha: 0.5).draw(in: NSRect(x: x, y: 0, width: minoSize, height: minoSize), from: NSRect(x: 0, y: 0, width: image.size.width, height: image.size.height), operation: NSCompositingOperation.copy, fraction: 1)
+                }
+            }
+            
+            image.unlockFocus()
+            self.ghostMinoImage = image
+        }
     }
 }
 
@@ -72,7 +113,7 @@ extension MinoPainter {
         for x in (0 ..< tetro.count) {
             for y in (0 ..< tetro[x].count) {
                 if tetro[x][y] > 0 {
-                    self.drawCell(x: x + cx, y: y + cy, color: color != Int.undefined ? color : tetro[x][y])
+                    self.drawCell(x: x + cx, y: y + cy, color: color != Int.undefined ? color : tetro[x][y], type: info.type)
                 }
             }
         }
@@ -81,12 +122,16 @@ extension MinoPainter {
     /**
      * Draws a pre-rendered mino.
      */
-    func drawCell(x: Int, y: Int, color: Int) {
+    func drawCell(x: Int, y: Int, color: Int, type: CoreBlockController.DrawType) {
         
         let minoSize: Int = GameSetting.shared.minoSize
         let x = x * minoSize
         let y = (y - 2) * minoSize
         
-        self.minoImage.draw(in: NSRect(x: x, y: y, width: minoSize, height: minoSize), from: NSRect(x: color * minoSize, y: 0, width: minoSize, height: minoSize), operation: NSCompositingOperation.copy, fraction: 1)
+        if type == CoreBlockController.DrawType.ghost {
+            self.ghostMinoImage.draw(in: NSRect(x: x, y: y, width: minoSize, height: minoSize), from: NSRect(x: color * minoSize, y: 0, width: minoSize, height: minoSize), operation: NSCompositingOperation.copy, fraction: 1)
+        } else {
+            self.minoImage.draw(in: NSRect(x: x, y: y, width: minoSize, height: minoSize), from: NSRect(x: color * minoSize, y: 0, width: minoSize, height: minoSize), operation: NSCompositingOperation.copy, fraction: 1)
+        }
     }
 }
